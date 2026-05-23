@@ -4,7 +4,7 @@ import { Toast } from 'primereact/toast'
 import { CanvasEditor } from '../components/CanvasEditor.jsx'
 import { EditorToolbar } from '../components/EditorToolbar.jsx'
 import { ShareModal } from '../components/ShareModal.jsx'
-import { selectTemplate, selectTextValues, updateText, undo, clearEditor } from '../store/editorSlice.js'
+import { selectTemplate, selectTextValues, updateText, undo, redo, clearEditor } from '../store/editorSlice.js'
 import { selectUploadFile } from '../store/uploadSlice.js'
 import { getTemplateById } from '../constants/templates.js'
 import './EditorPage.css'
@@ -22,7 +22,10 @@ export default function EditorPage() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'z') {
+        e.preventDefault()
+        dispatch(redo())
+      } else if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         e.preventDefault()
         dispatch(undo())
       }
