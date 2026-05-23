@@ -17,13 +17,21 @@ const pageVariants = {
   exit: { opacity: 0, y: -20, transition: { duration: 0.25 } },
 }
 
+const PARENT_ROUTE = {
+  '/suggestions': '/',
+  '/editor': '/suggestions',
+  '/saved': '/editor',
+}
+
 function AppLayout() {
   const dispatch = useDispatch()
   const location = useLocation()
   const navigate = useNavigate()
-  const isEditor = location.pathname === '/editor' || location.pathname === '/saved'
+  const isEditor = location.pathname === '/editor'
+  const isSaved = location.pathname === '/saved'
   const isSuggestions = location.pathname === '/suggestions'
   const isHome = location.pathname === '/'
+  const parentRoute = PARENT_ROUTE[location.pathname] || '/'
 
   useEffect(() => {
     loadLatestDraft().then((draft) => {
@@ -38,10 +46,10 @@ function AppLayout() {
 
   return (
     <>
-      {!isEditor && (
+      {!isEditor && !isSaved && (
         <nav className="app__nav">
           {!isHome && (
-            <button className="app__back-btn" onClick={() => navigate(-1)} aria-label="Go back">
+            <button className="app__back-btn" onClick={() => navigate(parentRoute)} aria-label="Go back">
               <i className="pi pi-arrow-left" />
             </button>
           )}
@@ -51,7 +59,7 @@ function AppLayout() {
         </nav>
       )}
 
-      <main className={`app__content ${isEditor ? 'app__content--editor' : ''} ${(isHome || isSuggestions) ? 'app__content--wide' : ''}`}>
+      <main className={`app__content ${isEditor ? 'app__content--editor' : ''} ${isSaved ? 'app__content--saved' : ''} ${(isHome || isSuggestions) ? 'app__content--wide' : ''}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}

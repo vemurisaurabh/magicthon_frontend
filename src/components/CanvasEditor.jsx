@@ -24,7 +24,7 @@ const FONT_FAMILIES = [
   { label: 'Bebas Neue', value: '"Bebas Neue", sans-serif' },
 ]
 
-export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload, onCopy, onShare, saving, sharing }) {
+export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload, onCopy, onShare, saving }) {
   const dispatch = useDispatch()
   const layers = useSelector(selectLayers)
   const activeLayerId = useSelector(selectActiveLayerId)
@@ -196,9 +196,9 @@ export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload
             <i className="pi pi-copy" />
             <span>Copy</span>
           </button>
-          <button className="canvas-editor__action" onClick={onShare} disabled={sharing}>
-            <i className={sharing ? 'pi pi-spin pi-spinner' : 'pi pi-link'} />
-            <span>{sharing ? 'Sharing...' : 'Share'}</span>
+          <button className="canvas-editor__action" onClick={onShare}>
+            <i className="pi pi-link" />
+            <span>Share</span>
           </button>
         </div>
       </div>

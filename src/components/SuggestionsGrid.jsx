@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useSelector } from 'react-redux'
-import { Button } from 'primereact/button'
 import { SuggestionCard } from './SuggestionCard.jsx'
 import { selectPreviewUrl } from '../store/uploadSlice.js'
 import './SuggestionsGrid.css'
@@ -9,22 +8,22 @@ import './SuggestionsGrid.css'
 const containerVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.08 },
+    transition: { staggerChildren: 0.07 },
   },
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
 }
 
 const QUICK_ACTIONS = [
-  'Make it funnier',
-  'More savage',
-  'More relatable',
-  'More absurd',
-  'Make it edgier',
-  'Completely different angle',
+  { label: 'Funnier', icon: 'pi-face-smile' },
+  { label: 'More savage', icon: 'pi-bolt' },
+  { label: 'More relatable', icon: 'pi-heart' },
+  { label: 'More absurd', icon: 'pi-sparkles' },
+  { label: 'Edgier', icon: 'pi-exclamation-triangle' },
+  { label: 'Different angle', icon: 'pi-refresh' },
 ]
 
 export function SuggestionsGrid({ suggestions, onSelect, onStartOver, onNewPhoto, onRefine, refining }) {
@@ -36,8 +35,8 @@ export function SuggestionsGrid({ suggestions, onSelect, onStartOver, onNewPhoto
     if (file) onNewPhoto(file)
   }
 
-  const handleQuickAction = useCallback((action) => {
-    if (onRefine) onRefine(action)
+  const handleQuickAction = useCallback((label) => {
+    if (onRefine) onRefine(label)
   }, [onRefine])
 
   const handleCustomFeedback = useCallback(() => {
@@ -56,48 +55,62 @@ export function SuggestionsGrid({ suggestions, onSelect, onStartOver, onNewPhoto
   }, [handleCustomFeedback])
 
   return (
-    <div className="suggestions-grid-wrap">
-      <h2 className="suggestions-grid__heading">The meme council has spoken</h2>
+    <div className="sg">
+      <header className="sg__header">
+        <h2 className="sg__title">The meme council has spoken</h2>
+        <p className="sg__subtitle">{suggestions.length} format{suggestions.length !== 1 ? 's' : ''} generated &middot; click to edit</p>
+      </header>
 
-      <div className={`suggestions-grid__refine ${refining ? 'suggestions-grid__refine--loading' : ''}`}>
-        <div className="suggestions-grid__quick-actions">
-          {QUICK_ACTIONS.map((action) => (
+      <section className={`sg__refine ${refining ? 'sg__refine--loading' : ''}`}>
+        <div className="sg__refine-label">
+          <i className="pi pi-sync" />
+          <span>Refine results</span>
+        </div>
+        <div className="sg__chips">
+          {QUICK_ACTIONS.map(({ label, icon }) => (
             <button
-              key={action}
-              className="suggestions-grid__quick-btn"
-              onClick={() => handleQuickAction(action)}
+              key={label}
+              className="sg__chip"
+              onClick={() => handleQuickAction(label)}
               disabled={refining}
             >
-              {action}
+              <i className={`pi ${icon}`} />
+              <span>{label}</span>
             </button>
           ))}
         </div>
-        <div className="suggestions-grid__feedback-row">
+        <div className="sg__input-row">
           <input
-            className="suggestions-grid__feedback-input"
+            className="sg__input"
             value={feedbackText}
             onChange={(e) => setFeedbackText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Or tell Chintu Memer what to change..."
+            placeholder="Or type your own instructions..."
             disabled={refining}
           />
           <button
-            className="suggestions-grid__feedback-send"
+            className="sg__send"
             onClick={handleCustomFeedback}
             disabled={refining || !feedbackText.trim()}
+            aria-label="Send feedback"
           >
             {refining ? <i className="pi pi-spin pi-spinner" /> : <i className="pi pi-arrow-right" />}
           </button>
         </div>
-        {refining && <p className="suggestions-grid__refine-status">Refining your memes...</p>}
-      </div>
+        {refining && (
+          <div className="sg__refine-indicator">
+            <span className="sg__refine-dot" />
+            <span>Chintu Memer is cooking...</span>
+          </div>
+        )}
+      </section>
 
       <motion.div
-        className="suggestions-grid"
+        className="sg__grid"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        key={suggestions.map((s) => s.topText).join('')}
+        key={suggestions.map((s) => s.topText).join('|')}
       >
         {suggestions.map((s, i) => (
           <motion.div key={s.templateId || i} variants={itemVariants}>
@@ -105,31 +118,24 @@ export function SuggestionsGrid({ suggestions, onSelect, onStartOver, onNewPhoto
           </motion.div>
         ))}
       </motion.div>
-      <div className="suggestions-grid__actions">
-        <Button
-          label="← Start over"
-          severity="secondary"
-          outlined
-          onClick={onStartOver}
-        />
-        <label className="suggestions-grid__upload-btn">
-          <Button
-            label="Try another photo"
-            icon="pi pi-camera"
-            severity="info"
-            outlined
-            type="button"
-            onClick={() => document.getElementById('new-photo-input').click()}
-          />
-        </label>
+
+      <footer className="sg__footer">
+        <button className="sg__footer-btn" onClick={onStartOver}>
+          <i className="pi pi-arrow-left" />
+          <span>Start over</span>
+        </button>
+        <button className="sg__footer-btn" onClick={() => document.getElementById('new-photo-input').click()}>
+          <i className="pi pi-camera" />
+          <span>Try another photo</span>
+        </button>
         <input
           id="new-photo-input"
           type="file"
           accept="image/*"
-          className="suggestions-grid__file-input"
+          className="sg__file-input"
           onChange={handleFileInput}
         />
-      </div>
+      </footer>
     </div>
   )
 }

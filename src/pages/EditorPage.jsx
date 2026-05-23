@@ -9,7 +9,6 @@ import { selectUploadFile, clearFile } from '../store/uploadSlice.js'
 import { clearSuggestions } from '../store/suggestSlice.js'
 import { getTemplateById } from '../constants/templates.js'
 import { saveDraft } from '../services/draftService.js'
-import { shareMeme } from '../services/shareService.js'
 import './EditorPage.css'
 
 export default function EditorPage() {
@@ -96,29 +95,14 @@ export default function EditorPage() {
     }
   }, [])
 
-  const [sharing, setSharing] = useState(false)
-
-  const handleShare = useCallback(async () => {
+  const handleShare = useCallback(() => {
     const stage = stageRef.current
-    if (!stage || sharing) return
-    setSharing(true)
-    try {
-      const dataUrl = stage.toDataURL({ pixelRatio: 2 })
-      const result = await shareMeme(dataUrl, suggestion?.templateId, {})
-      const url = result.shareUrl
-
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(url)
-        toastRef.current?.show({ severity: 'success', summary: 'Shareable link copied!', detail: url, life: 4000 })
-      } else {
-        toastRef.current?.show({ severity: 'info', summary: 'Shareable link', detail: url, life: 6000 })
-      }
-    } catch (err) {
-      toastRef.current?.show({ severity: 'error', summary: err.message || 'Failed to generate link', life: 3000 })
-    } finally {
-      setSharing(false)
-    }
-  }, [suggestion, sharing])
+    if (!stage) return
+    const dataUrl = stage.toDataURL({ pixelRatio: 2 })
+    navigate('/saved', {
+      state: { imageDataUrl: dataUrl, templateId: suggestion?.templateId },
+    })
+  }, [suggestion, navigate])
 
   if (!template || !suggestion) return <Navigate to="/" replace />
 
@@ -140,7 +124,6 @@ export default function EditorPage() {
           onCopy={handleCopy}
           onShare={handleShare}
           saving={saving}
-          sharing={sharing}
         />
       </div>
     </div>

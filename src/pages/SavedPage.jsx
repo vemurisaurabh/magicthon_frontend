@@ -1,6 +1,5 @@
 import { useRef, useCallback, useState } from 'react'
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
-import { Button } from 'primereact/button'
 import { Toast } from 'primereact/toast'
 import { shareMeme } from '../services/shareService.js'
 import './SavedPage.css'
@@ -74,85 +73,71 @@ export default function SavedPage() {
   const supportsNativeShare = typeof navigator !== 'undefined' && !!navigator.share
 
   return (
-    <div className="saved-page">
+    <div className="saved">
       <Toast ref={toastRef} />
 
-      <div className="saved-page__header">
-        <h1 className="saved-page__title">Your meme is ready</h1>
-        <p className="saved-page__subtitle">saved successfully</p>
-      </div>
+      <nav className="saved__toolbar">
+        <button className="saved__toolbar-btn" onClick={() => navigate('/editor')}>
+          <i className="pi pi-arrow-left" />
+          <span>Back to editor</span>
+        </button>
+        <span className="saved__toolbar-title">Your meme is ready</span>
+        <button className="saved__toolbar-btn" onClick={() => navigate('/')}>
+          <i className="pi pi-home" />
+          <span>New meme</span>
+        </button>
+      </nav>
 
-      <div className="saved-page__preview">
-        <img src={imageDataUrl} alt="Your meme" className="saved-page__image" />
-      </div>
+      <div className="saved__body">
+        <div className="saved__preview">
+          <img src={imageDataUrl} alt="Your meme" className="saved__image" />
+        </div>
 
-      <div className="saved-page__actions">
-        <Button
-          icon="pi pi-download"
-          label="Download"
-          className="saved-page__btn saved-page__btn--primary"
-          onClick={handleDownload}
-        />
-        <Button
-          icon="pi pi-copy"
-          label="Copy image"
-          className="saved-page__btn"
-          outlined
-          onClick={handleCopyImage}
-        />
-        {supportsNativeShare && (
-          <Button
-            icon="pi pi-share-alt"
-            label="Share"
-            className="saved-page__btn"
-            outlined
-            onClick={handleNativeShare}
-          />
-        )}
-      </div>
-
-      <div className="saved-page__link-section">
-        {!shareUrl ? (
-          <Button
-            icon="pi pi-link"
-            label={linkLoading ? 'Generating...' : 'Generate shareable link'}
-            className="saved-page__btn saved-page__btn--link"
-            outlined
-            onClick={handleGetLink}
-            loading={linkLoading}
-          />
-        ) : (
-          <div className="saved-page__url-row">
-            <input
-              className="saved-page__url-input"
-              value={shareUrl}
-              readOnly
-              onClick={(e) => e.target.select()}
-            />
-            <Button
-              icon="pi pi-copy"
-              label={linkCopied ? 'Copied' : 'Copy'}
-              className="saved-page__btn saved-page__btn--copy"
-              size="small"
-              onClick={handleCopyLink}
-            />
+        <div className="saved__sidebar">
+          <div className="saved__actions">
+            <button className="saved__action saved__action--primary" onClick={handleDownload}>
+              <i className="pi pi-download" />
+              <span>Download</span>
+            </button>
+            <button className="saved__action" onClick={handleCopyImage}>
+              <i className="pi pi-copy" />
+              <span>Copy image</span>
+            </button>
+            {supportsNativeShare && (
+              <button className="saved__action" onClick={handleNativeShare}>
+                <i className="pi pi-share-alt" />
+                <span>Share</span>
+              </button>
+            )}
           </div>
-        )}
-      </div>
 
-      <div className="saved-page__footer">
-        <Button
-          label="← Back to editor"
-          className="saved-page__btn saved-page__btn--back"
-          text
-          onClick={() => navigate('/editor')}
-        />
-        <Button
-          label="Start over"
-          className="saved-page__btn saved-page__btn--back"
-          text
-          onClick={() => navigate('/')}
-        />
+          <div className="saved__link-section">
+            <span className="saved__link-label">Shareable link</span>
+            {!shareUrl ? (
+              <button
+                className="saved__action saved__action--link"
+                onClick={handleGetLink}
+                disabled={linkLoading}
+              >
+                <i className={linkLoading ? 'pi pi-spin pi-spinner' : 'pi pi-link'} />
+                <span>{linkLoading ? 'Generating...' : 'Generate link'}</span>
+              </button>
+            ) : (
+              <div className="saved__url-row">
+                <input
+                  className="saved__url-input"
+                  value={shareUrl}
+                  readOnly
+                  onClick={(e) => e.target.select()}
+                />
+                <button className="saved__action saved__action--copy" onClick={handleCopyLink}>
+                  <i className="pi pi-copy" />
+                  <span>{linkCopied ? 'Copied!' : 'Copy'}</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   )

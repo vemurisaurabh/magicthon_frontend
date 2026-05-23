@@ -2,32 +2,37 @@ import { motion } from 'framer-motion'
 import { getTemplateById } from '../constants/templates.js'
 import './SuggestionCard.css'
 
-const cardVariants = {
-  idle: { scale: 1 },
-  hover: { scale: 1.03, borderColor: 'var(--color-accent)' },
-  tap: { scale: 0.98 },
-}
-
 export function SuggestionCard({ suggestion, onClick, previewUrl }) {
   const template = getTemplateById(suggestion.templateId)
   const name = template?.name || suggestion.templateId
 
   return (
     <motion.div
-      className="suggestion-card"
-      variants={cardVariants}
-      initial="idle"
-      whileHover="hover"
-      whileTap="tap"
+      className="sc"
+      whileHover={{ y: -3 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.15 }}
       onClick={() => onClick(suggestion)}
     >
-      <span className="suggestion-card__label">{name}</span>
-      <div className="suggestion-card__preview">
-        {previewUrl && <img src={previewUrl} alt="Meme preview" className="suggestion-card__img" />}
-        <span className="suggestion-card__overlay-top">{suggestion.topText}</span>
-        <span className="suggestion-card__overlay-bottom">{suggestion.bottomText}</span>
+      <div className="sc__head">
+        <span className="sc__format">{name}</span>
       </div>
-      <p className="suggestion-card__reasoning">{suggestion.reasoning}</p>
+
+      <div className="sc__preview">
+        {previewUrl && <img src={previewUrl} alt="" className="sc__img" loading="lazy" />}
+        <span className="sc__text sc__text--top">{suggestion.topText}</span>
+        <span className="sc__text sc__text--bottom">{suggestion.bottomText}</span>
+      </div>
+
+      <p className="sc__reasoning">
+        <i className="pi pi-info-circle" />
+        {suggestion.reasoning}
+      </p>
+
+      <div className="sc__cta">
+        <span>Edit this meme</span>
+        <i className="pi pi-arrow-right" />
+      </div>
     </motion.div>
   )
 }

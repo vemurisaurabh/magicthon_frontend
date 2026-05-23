@@ -2,6 +2,7 @@ import { useCallback, useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'primereact/button'
+import { Carousel } from 'primereact/carousel'
 import { motion } from 'framer-motion'
 import { UploadZone } from '../components/UploadZone.jsx'
 import { WebcamCapture } from '../components/WebcamCapture.jsx'
@@ -17,7 +18,11 @@ const pressVariants = {
   tap: { scale: 0.97 },
 }
 
-const MAX_TEMPLATES = 6
+const MAX_TEMPLATES = 10
+
+const CAROUSEL_RESPONSIVE = [
+  { breakpoint: '480px', numVisible: 1, numScroll: 1 },
+]
 
 export default function HomePage() {
   const dispatch = useDispatch()
@@ -80,6 +85,27 @@ export default function HomePage() {
     }
   }, [dispatch, file, prompt, selectedTemplates])
 
+  const templateItem = useCallback((t) => {
+    const isSelected = selectedTemplates.includes(t.id)
+    const isDisabled = !isSelected && selectedTemplates.length >= MAX_TEMPLATES
+    return (
+      <div
+        className={`tpl-slide ${isSelected ? 'tpl-slide--active' : ''} ${isDisabled ? 'tpl-slide--disabled' : ''}`}
+        onClick={() => !isDisabled && handleToggleTemplate(t.id)}
+      >
+        <div className="tpl-slide__img-wrap">
+          <img src={t.referenceUrl} alt={t.name} className="tpl-slide__img" loading="lazy" />
+          <span className="tpl-slide__name">{t.name}</span>
+          {isSelected && (
+            <span className="tpl-slide__check">
+              <i className="pi pi-check" />
+            </span>
+          )}
+        </div>
+      </div>
+    )
+  }, [selectedTemplates, handleToggleTemplate])
+
   const isLoading = suggestStatus === 'loading'
 
   if (isLoading) {
@@ -121,26 +147,6 @@ export default function HomePage() {
           previewUrl={previewUrl}
           onWebcamClick={() => setWebcamOpen(true)}
         />
-        <div className="app__buttons">
-          <motion.div className="app__cta-wrap" variants={pressVariants} initial="idle" whileTap="tap">
-            <Button
-              label="Analyse this chaos →"
-              size="large"
-              className="analyze-cta"
-              onClick={handleAnalyze}
-            />
-          </motion.div>
-          <motion.div variants={pressVariants} initial="idle" whileTap="tap">
-            <Button
-              label="🎰 Surprise me"
-              size="large"
-              outlined
-              className="lucky-cta"
-              onClick={handleLucky}
-            />
-          </motion.div>
-        </div>
-        {suggestError && <p className="app__error">{suggestError}</p>}
       </div>
 
       <div className="home-split__right">
@@ -159,27 +165,44 @@ export default function HomePage() {
 
           <div className="home-context__templates">
             <label className="home-context__label">
-              Meme formats
-              {selectedTemplates.length > 0 && (
-                <span className="home-context__count">{selectedTemplates.length} selected</span>
-              )}
+              Pick meme formats
+              <span className="home-context__count">
+                {selectedTemplates.length > 0
+                  ? `${selectedTemplates.length} / ${MAX_TEMPLATES}`
+                  : 'optional'}
+              </span>
             </label>
-            <div className="home-context__chips">
-              {TEMPLATES.map((t) => {
-                const isSelected = selectedTemplates.includes(t.id)
-                const isDisabled = !isSelected && selectedTemplates.length >= MAX_TEMPLATES
-                return (
-                  <button
-                    key={t.id}
-                    className={`home-context__chip ${isSelected ? 'home-context__chip--active' : ''}`}
-                    onClick={() => handleToggleTemplate(t.id)}
-                    disabled={isDisabled}
-                  >
-                    {t.name}
-                  </button>
-                )
-              })}
-            </div>
+            <Carousel
+              value={TEMPLATES}
+              itemTemplate={templateItem}
+              numVisible={2}
+              numScroll={1}
+              responsiveOptions={CAROUSEL_RESPONSIVE}
+              circular
+              autoplayInterval={3000}
+              className="tpl-carousel"
+            />
+          </div>
+
+          <div className="home-context__actions">
+            <motion.div className="app__cta-wrap" variants={pressVariants} initial="idle" whileTap="tap">
+              <Button
+                label="Analyse this chaos →"
+                size="large"
+                className="analyze-cta"
+                onClick={handleAnalyze}
+              />
+            </motion.div>
+            <motion.div variants={pressVariants} initial="idle" whileTap="tap">
+              <Button
+                label="🎰 Surprise me"
+                size="large"
+                outlined
+                className="lucky-cta"
+                onClick={handleLucky}
+              />
+            </motion.div>
+            {suggestError && <p className="app__error">{suggestError}</p>}
           </div>
         </div>
       </div>

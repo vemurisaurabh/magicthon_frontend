@@ -1,83 +1,151 @@
-.suggestion-card {
+/* ═══════════════════════════════════════
+   SuggestionCard — Brutalist card system
+   ═══════════════════════════════════════ */
+
+.sc {
   background: var(--color-card);
   border: 1px solid var(--color-border);
-  border-radius: 0;
-  padding: 0;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  transition: border-color var(--transition-fast);
-  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.suggestion-card:hover {
-  border-color: var(--color-text-secondary);
+.sc:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
 }
 
-.suggestion-card__label {
+/* ── Header ── */
+
+.sc__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sc__format {
   font-family: var(--font-mono);
   font-size: 0.65rem;
   font-weight: 600;
   color: var(--color-accent);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: var(--space-3) var(--space-3) 0;
 }
 
-.suggestion-card__preview {
+/* ── Preview ── */
+
+.sc__preview {
   position: relative;
   width: 100%;
-  height: 150px;
-  background: var(--color-bg);
+  aspect-ratio: 4 / 3;
+  background: #0a0a0a;
   overflow: hidden;
 }
 
-.suggestion-card__img {
+.sc__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.85;
-  transition: opacity var(--transition-base);
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
 }
 
-.suggestion-card:hover .suggestion-card__img {
+.sc:hover .sc__img {
   opacity: 1;
 }
 
-.suggestion-card__overlay-top,
-.suggestion-card__overlay-bottom {
+.sc__text {
   position: absolute;
   left: 0;
   right: 0;
   text-align: center;
   font-family: var(--font-meme);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #fff;
   text-transform: uppercase;
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3);
   text-shadow:
     -1px -1px 0 #000,
      1px -1px 0 #000,
     -1px  1px 0 #000,
-     1px  1px 0 #000;
-  line-height: 1.2;
+     1px  1px 0 #000,
+     0 0 6px rgba(0,0,0,0.6);
+  line-height: 1.25;
   word-break: break-word;
 }
 
-.suggestion-card__overlay-top {
+.sc__text--top {
   top: var(--space-2);
 }
 
-.suggestion-card__overlay-bottom {
+.sc__text--bottom {
   bottom: var(--space-2);
 }
 
-.suggestion-card__reasoning {
+/* ── Reasoning ── */
+
+.sc__reasoning {
   margin: 0;
   font-size: 0.75rem;
   color: var(--color-text-secondary);
   line-height: 1.5;
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--color-border);
-  letter-spacing: -0.01em;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.sc__reasoning .pi {
+  font-size: 0.65rem;
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* ── CTA footer ── */
+
+.sc__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sc__cta .pi {
+  font-size: 0.6rem;
+  transition: transform 0.15s ease;
+}
+
+.sc:hover .sc__cta {
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+}
+
+.sc:hover .sc__cta .pi {
+  transform: translateX(3px);
+}
+
+/* ── Mobile ── */
+
+@media (max-width: 559px) {
+  .sc__preview {
+    aspect-ratio: 16 / 10;
+  }
+
+  .sc__text {
+    font-size: 0.7rem;
+  }
 }

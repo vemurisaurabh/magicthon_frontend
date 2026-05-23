@@ -77,6 +77,12 @@
   gap: 0;
 }
 
+.app__content--saved {
+  max-width: 100%;
+  padding: 0;
+  gap: 0;
+}
+
 .app__buttons {
   width: 100%;
   display: flex;
