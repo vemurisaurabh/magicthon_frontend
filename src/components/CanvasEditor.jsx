@@ -24,7 +24,7 @@ const FONT_FAMILIES = [
   { label: 'Bebas Neue', value: '"Bebas Neue", sans-serif' },
 ]
 
-export const CanvasEditor = forwardRef(function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload, onCopy, onShare, saving }, ref) {
+export const CanvasEditor = forwardRef(function CanvasEditor({ template, userPhoto, aiImageUrl, stageRef, onSave, onDownload, onCopy, onShare, saving }, ref) {
   const dispatch = useDispatch()
   const layers = useSelector(selectLayers)
   const activeLayerId = useSelector(selectActiveLayerId)
@@ -76,17 +76,19 @@ export const CanvasEditor = forwardRef(function CanvasEditor({ template, userPho
     return () => observer.disconnect()
   }, [])
 
+  const backgroundSrc = aiImageUrl || userPhoto
+
   useEffect(() => {
-    if (!userPhoto) return
-    const url = typeof userPhoto === 'string' ? userPhoto : URL.createObjectURL(userPhoto)
+    if (!backgroundSrc) return
+    const url = typeof backgroundSrc === 'string' ? backgroundSrc : URL.createObjectURL(backgroundSrc)
     const image = new window.Image()
     image.crossOrigin = 'anonymous'
     image.onload = () => setImg(image)
     image.src = url
     return () => {
-      if (typeof userPhoto !== 'string') URL.revokeObjectURL(url)
+      if (typeof backgroundSrc !== 'string') URL.revokeObjectURL(url)
     }
-  }, [userPhoto])
+  }, [backgroundSrc])
 
   useEffect(() => {
     const tr = transformerRef.current

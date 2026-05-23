@@ -34,6 +34,18 @@
   text-transform: uppercase;
 }
 
+.sg__cursor {
+  display: inline-block;
+  color: var(--color-accent);
+  font-weight: 300;
+  animation: sg-cursor-blink 0.7s step-end infinite;
+}
+
+@keyframes sg-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* ── Refine section ── */
 
 .sg__refine {

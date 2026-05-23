@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-7);
+  justify-content: flex-start;
+  gap: var(--space-6);
   width: 100%;
   min-height: 70vh;
   padding: var(--space-7) var(--space-4);
@@ -11,15 +11,69 @@
 }
 
 @keyframes analysisFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Progress ring ── */
+
+.al__progress-ring {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.al__ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.al__ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 3;
+}
+
+.al__ring-fill {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 163;
+  stroke-dashoffset: 163;
+  animation: ringProgress 8s ease-in-out infinite;
+}
+
+@keyframes ringProgress {
+  0% { stroke-dashoffset: 163; }
+  50% { stroke-dashoffset: 20; }
+  100% { stroke-dashoffset: 163; }
+}
+
+.al__ring-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.al__ring-icon .pi {
+  font-size: 1rem;
+  color: var(--color-accent);
+  animation: iconSpin 3s linear infinite;
+}
+
+@keyframes iconSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ── Phrase ── */
 
 .analysis-loading__phrase-wrap {
   min-height: 48px;
@@ -39,24 +93,98 @@
   line-height: 1.2;
 }
 
+/* ── Skeleton grid ── */
+
 .analysis-loading__skeletons {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-3);
   width: 100%;
-  max-width: 800px;
+  max-width: 960px;
 }
 
-.analysis-loading__skeletons .p-skeleton {
-  border-radius: 0 !important;
-  background: var(--color-surface) !important;
-  animation: skeletonPulse 1.5s ease-in-out infinite;
+@media (min-width: 560px) {
+  .analysis-loading__skeletons {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-@keyframes skeletonPulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+@media (min-width: 920px) {
+  .analysis-loading__skeletons {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
+
+/* ── Skeleton card ── */
+
+.al__card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+.al__card--empty {
+  opacity: 0;
+}
+
+.al__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.al__card-body {
+  flex: 1;
+  padding: 0;
+  position: relative;
+  min-height: 120px;
+}
+
+.al__shimmer-block {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(255, 255, 255, 0.07) 40%,
+    rgba(255, 255, 255, 0.02) 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmerSlide 1.8s infinite linear;
+}
+
+@keyframes shimmerSlide {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.al__card-footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.al__bar {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  animation: barPulse 1.5s ease-in-out infinite;
+}
+
+.al__bar--xs { width: 40px; }
+.al__bar--sm { width: 80px; }
+.al__bar--md { width: 60%; }
+
+@keyframes barPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* ── Mobile ── */
 
 @media (max-width: 559px) {
   .analysis-loading {
@@ -72,16 +200,13 @@
   .analysis-loading__phrase-wrap {
     min-height: 36px;
   }
-}
 
-@media (min-width: 600px) {
-  .analysis-loading__skeletons {
-    grid-template-columns: repeat(2, 1fr);
+  .al__progress-ring {
+    width: 48px;
+    height: 48px;
   }
-}
 
-@media (min-width: 900px) {
-  .analysis-loading__skeletons {
-    grid-template-columns: repeat(3, 1fr);
+  .al__card {
+    min-height: 160px;
   }
 }

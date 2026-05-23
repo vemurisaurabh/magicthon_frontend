@@ -1,20 +1,93 @@
-import { useState, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { useSelector } from 'react-redux'
 import { SuggestionCard } from './SuggestionCard.jsx'
 import { selectPreviewUrl } from '../store/uploadSlice.js'
+import { selectRetrying } from '../store/suggestSlice.js'
 import './SuggestionsGrid.css'
 
 const containerVariants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.07 },
+    transition: { staggerChildren: 0.12, delayChildren: 0.3 },
   },
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+  hidden: { opacity: 0, y: 30, scale: 0.97 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: [0.23, 1, 0.32, 1] } },
+}
+
+function TypingText({ text, className, speed = 40 }) {
+  const [displayed, setDisplayed] = useState('')
+  const indexRef = useRef(0)
+
+  useEffect(() => {
+    setDisplayed('')
+    indexRef.current = 0
+    const timer = setInterval(() => {
+      indexRef.current++
+      setDisplayed(text.slice(0, indexRef.current))
+      if (indexRef.current >= text.length) clearInterval(timer)
+    }, speed)
+    return () => clearInterval(timer)
+  }, [text, speed])
+
+  return (
+    <span className={className}>
+      {displayed}
+      {displayed.length < text.length && <span className="sg__cursor">|</span>}
+    </span>
+  )
+}
+
+function CountUp({ target, duration = 800 }) {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    if (target <= 0) return
+    const startTime = performance.now()
+    let raf
+    const tick = (now) => {
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setValue(Math.round(eased * target))
+      if (progress < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [target, duration])
+
+  return <>{value}</>
+}
+
+function ParallaxCard({ children }) {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const rotateX = useTransform(y, [-0.5, 0.5], [4, -4])
+  const rotateY = useTransform(x, [-0.5, 0.5], [-4, 4])
+
+  const handleMove = useCallback((e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    x.set((e.clientX - rect.left) / rect.width - 0.5)
+    y.set((e.clientY - rect.top) / rect.height - 0.5)
+  }, [x, y])
+
+  const handleLeave = useCallback(() => {
+    x.set(0)
+    y.set(0)
+  }, [x, y])
+
+  return (
+    <motion.div
+      style={{ rotateX, rotateY, transformPerspective: 600 }}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+    >
+      {children}
+    </motion.div>
+  )
 }
 
 const QUICK_ACTIONS = [
@@ -26,8 +99,9 @@ const QUICK_ACTIONS = [
   { label: 'Different angle', icon: 'pi-refresh' },
 ]
 
-export function SuggestionsGrid({ suggestions, onSelect, onStartOver, onNewPhoto, onRefine, refining }) {
+export function SuggestionsGrid({ suggestions, generatedImages = {}, imageGenDone = false, onSelect, onRetryGenerate, onStartOver, onNewPhoto, onRefine, refining }) {
   const previewUrl = useSelector(selectPreviewUrl)
+  const retrying = useSelector(selectRetrying)
   const [feedbackText, setFeedbackText] = useState('')
 
   const handleFileInput = (e) => {
@@ -56,10 +130,19 @@ export function SuggestionsGrid({ suggestions, onSelect, onStartOver, onNewPhoto
 
   return (
     <div className="sg">
-      <header className="sg__header">
-        <h2 className="sg__title">The meme council has spoken</h2>
-        <p className="sg__subtitle">{suggestions.length} format{suggestions.length !== 1 ? 's' : ''} generated &middot; click to edit</p>
-      </header>
+      <motion.header
+        className="sg__header"
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+      >
+        <h2 className="sg__title">
+          <TypingText text="The meme council has spoken" speed={35} />
+        </h2>
+        <p className="sg__subtitle">
+          <CountUp target={suggestions.length} /> format{suggestions.length !== 1 ? 's' : ''} generated &middot; click to edit
+        </p>
+      </motion.header>
 
       <section className={`sg__refine ${refining ? 'sg__refine--loading' : ''}`}>
         <div className="sg__refine-label">
@@ -114,7 +197,17 @@ export function SuggestionsGrid({ suggestions, onSelect, onStartOver, onNewPhoto
       >
         {suggestions.map((s, i) => (
           <motion.div key={s.templateId || i} variants={itemVariants}>
-            <SuggestionCard suggestion={s} onClick={onSelect} previewUrl={previewUrl} />
+            <ParallaxCard>
+              <SuggestionCard
+                suggestion={s}
+                onClick={onSelect}
+                onRetry={onRetryGenerate}
+                previewUrl={previewUrl}
+                aiImageUrl={generatedImages[s.templateId]}
+                imageGenDone={imageGenDone}
+                isRetrying={!!retrying[s.templateId]}
+              />
+            </ParallaxCard>
           </motion.div>
         ))}
       </motion.div>

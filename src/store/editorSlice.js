@@ -41,6 +41,7 @@ const editorSlice = createSlice({
   name: 'editor',
   initialState: {
     selectedTemplate: null,
+    aiImageUrl: null,
     layers: [],
     activeLayerId: null,
     history: [],
@@ -50,6 +51,7 @@ const editorSlice = createSlice({
     setSelectedTemplate(state, action) {
       const suggestion = action.payload
       state.selectedTemplate = suggestion
+      state.aiImageUrl = suggestion._aiImageUrl || null
       const layers = []
       if (suggestion.topText) {
         layers.push(createLayer(suggestion.topText, 0.05, 0.05))
@@ -142,6 +144,7 @@ const editorSlice = createSlice({
 
     clearEditor(state) {
       state.selectedTemplate = null
+      state.aiImageUrl = null
       state.layers = []
       state.activeLayerId = null
       state.history = []
@@ -165,6 +168,7 @@ export const {
 } = editorSlice.actions
 
 export const selectTemplate = (state) => state.editor.selectedTemplate
+export const selectAiImageUrl = (state) => state.editor.aiImageUrl
 export const selectLayers = (state) => state.editor.layers
 export const selectActiveLayerId = (state) => state.editor.activeLayerId
 export const selectActiveLayer = (state) => {

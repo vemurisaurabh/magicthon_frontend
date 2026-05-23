@@ -4,7 +4,7 @@ import { useNavigate, Navigate } from 'react-router-dom'
 import { Toast } from 'primereact/toast'
 import { CanvasEditor } from '../components/CanvasEditor.jsx'
 import { EditorToolbar } from '../components/EditorToolbar.jsx'
-import { selectTemplate, selectLayers, undo, redo, clearEditor } from '../store/editorSlice.js'
+import { selectTemplate, selectAiImageUrl, selectLayers, undo, redo, clearEditor } from '../store/editorSlice.js'
 import { selectUploadFile, clearFile } from '../store/uploadSlice.js'
 import { clearSuggestions } from '../store/suggestSlice.js'
 import { getTemplateById } from '../constants/templates.js'
@@ -15,6 +15,7 @@ export default function EditorPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const suggestion = useSelector(selectTemplate)
+  const aiImageUrl = useSelector(selectAiImageUrl)
   const layers = useSelector(selectLayers)
   const userPhoto = useSelector(selectUploadFile)
   const toastRef = useRef(null)
@@ -114,6 +115,7 @@ export default function EditorPage() {
           ref={editorRef}
           template={template}
           userPhoto={userPhoto}
+          aiImageUrl={aiImageUrl}
           stageRef={stageRef}
           onSave={handleSave}
           onDownload={handleDownload}

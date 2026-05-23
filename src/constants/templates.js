@@ -36,16 +36,16 @@ export const TEMPLATES = [
     overlayStyle: 'classic',
   },
   {
-    id: 'this-is-fine',
-    name: 'This Is Fine',
-    referenceUrl: 'https://i.imgflip.com/wxica.jpg',
+    id: 'your-face-when',
+    name: 'Your Face When',
+    referenceUrl: 'https://i.imgflip.com/3oevdk.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
-      { id: 'top', label: 'Situation', defaultText: 'Everything is on fire' },
-      { id: 'bottom', label: 'Reaction', defaultText: 'This is fine.' },
+      { id: 'top', label: 'Situation', defaultText: 'Your face when' },
+      { id: 'bottom', label: 'Punchline', defaultText: 'The meeting could have been an email' },
     ],
-    overlayStyle: 'minimal',
+    overlayStyle: 'classic',
   },
   {
     id: 'woman-yelling-at-cat',
@@ -144,16 +144,16 @@ export const TEMPLATES = [
     overlayStyle: 'classic',
   },
   {
-    id: 'surprised-pikachu',
-    name: 'Surprised Pikachu',
-    referenceUrl: 'https://i.imgflip.com/2kbn1e.jpg',
+    id: 'blue-pill-red-pill',
+    name: 'Blue Pill Red Pill',
+    referenceUrl: 'https://i.imgflip.com/1e4lu0.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
-      { id: 'top', label: 'Obvious action', defaultText: 'Does the obvious thing' },
-      { id: 'bottom', label: 'Shock', defaultText: '*surprised pikachu face*' },
+      { id: 'top', label: 'Blue pill', defaultText: 'Stay comfortable' },
+      { id: 'bottom', label: 'Red pill', defaultText: 'Face the harsh truth' },
     ],
-    overlayStyle: 'classic',
+    overlayStyle: 'editorial',
   },
   {
     id: 'is-this-a-pigeon',
@@ -228,16 +228,16 @@ export const TEMPLATES = [
     overlayStyle: 'classic',
   },
   {
-    id: 'confession-bear',
-    name: 'Confession Bear',
-    referenceUrl: 'https://i.imgflip.com/1bh8.jpg',
+    id: 'pov-first-day-office',
+    name: 'POV: First Day in Office',
+    referenceUrl: 'https://imgflip.com/s/meme/First-Day-On-The-Internet-Kid.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
-      { id: 'top', label: 'Setup', defaultText: 'I have a confession...' },
-      { id: 'bottom', label: 'Confession', defaultText: 'I actually enjoy it' },
+      { id: 'top', label: 'POV setup', defaultText: 'POV: First day in office' },
+      { id: 'bottom', label: 'Reality', defaultText: 'Already planning my resignation' },
     ],
-    overlayStyle: 'classic',
+    overlayStyle: 'editorial',
   },
 ]
 
