@@ -5,7 +5,7 @@ import { Toast } from 'primereact/toast'
 import { shareMeme } from '../services/shareService.js'
 import './ShareModal.css'
 
-export function ShareModal({ visible, onHide, stageRef, templateId, textValues }) {
+export function ShareModal({ visible, onHide, stageRef, templateId, layers }) {
   const toastRef = useRef(null)
   const [copied, setCopied] = useState(false)
   const [shareUrl, setShareUrl] = useState(null)
@@ -50,14 +50,18 @@ export function ShareModal({ visible, onHide, stageRef, templateId, textValues }
     setLinkLoading(true)
     try {
       const dataUrl = stage.toDataURL({ pixelRatio: 2 })
-      const result = await shareMeme(dataUrl, templateId, textValues)
+      const texts = (layers || []).reduce((acc, l) => {
+        if (l.text) acc[l.id] = l.text
+        return acc
+      }, {})
+      const result = await shareMeme(dataUrl, templateId, texts)
       setShareUrl(result.shareUrl)
     } catch (err) {
       toastRef.current?.show({ severity: 'error', summary: err.message || 'Failed to generate link', life: 3000 })
     } finally {
       setLinkLoading(false)
     }
-  }, [stageRef, templateId, textValues])
+  }, [stageRef, templateId, layers])
 
   const handleCopyLink = useCallback(() => {
     if (shareUrl) {
@@ -126,7 +130,7 @@ export function ShareModal({ visible, onHide, stageRef, templateId, textValues }
           </div>
 
           <div className="share-modal__link-section">
-            <p className="share-modal__link-label">Shareable link (works after deployment):</p>
+            <p className="share-modal__link-label">Shareable link</p>
             {!shareUrl ? (
               <Button
                 label={linkLoading ? 'Generating...' : 'Generate shareable link'}

@@ -35,13 +35,27 @@ export function UploadZone({ onFileSelect, previewUrl, onWebcamClick }) {
     setIsDragOver(false)
   }, [])
 
-  const handleClick = useCallback(() => {
-    inputRef.current?.click()
-  }, [])
-
   const handleInputChange = useCallback((e) => {
     handleFiles(e.target.files)
   }, [handleFiles])
+
+  const handlePasteClick = useCallback(async () => {
+    try {
+      const items = await navigator.clipboard.read()
+      for (const item of items) {
+        const imageType = item.types.find((t) => t.startsWith('image/'))
+        if (imageType) {
+          const blob = await item.getType(imageType)
+          const file = new File([blob], 'pasted-image.png', { type: imageType })
+          onFileSelect(file)
+          return
+        }
+      }
+      // No image in clipboard -- fall through silently
+    } catch {
+      // Clipboard API not available or denied -- fall through
+    }
+  }, [onFileSelect])
 
   useEffect(() => {
     const handlePaste = (e) => {
@@ -65,10 +79,10 @@ export function UploadZone({ onFileSelect, previewUrl, onWebcamClick }) {
         variants={hoverVariants}
         initial="idle"
         whileHover="hover"
-        onClick={handleClick}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
+        onClick={() => inputRef.current?.click()}
       >
         <input
           ref={inputRef}
@@ -81,20 +95,34 @@ export function UploadZone({ onFileSelect, previewUrl, onWebcamClick }) {
           <img src={previewUrl} alt="Preview" className="upload-zone__preview" />
         ) : (
           <div className="upload-zone__placeholder">
-            <i className="pi pi-cloud-upload upload-zone__icon" />
-            <p className="upload-zone__title">Drop your most chaotic photo here</p>
-            <p className="upload-zone__subtitle">or click to browse</p>
+            <i className="pi pi-image upload-zone__icon" />
+            <p className="upload-zone__title">Drop your photo here</p>
+            <div className="upload-zone__options">
+              <button
+                className="upload-zone__option"
+                onClick={(e) => { e.stopPropagation(); inputRef.current?.click() }}
+              >
+                <i className="pi pi-upload" />
+                <span>Browse files</span>
+              </button>
+              <button
+                className="upload-zone__option"
+                onClick={(e) => { e.stopPropagation(); handlePasteClick() }}
+              >
+                <i className="pi pi-clipboard" />
+                <span>Paste from clipboard</span>
+              </button>
+              <button
+                className="upload-zone__option"
+                onClick={(e) => { e.stopPropagation(); onWebcamClick() }}
+              >
+                <i className="pi pi-camera" />
+                <span>Webcam</span>
+              </button>
+            </div>
           </div>
         )}
       </motion.div>
-      <div className="upload-zone__actions">
-        <button className="upload-zone__paste-link" onClick={handleClick}>
-          paste from clipboard
-        </button>
-        <button className="upload-zone__webcam-btn" onClick={onWebcamClick}>
-          <i className="pi pi-camera" />
-        </button>
-      </div>
     </div>
   )
 }

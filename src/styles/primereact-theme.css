@@ -6,88 +6,110 @@
   --p-dialog-border-color: var(--color-border);
 }
 
+/* ── Primary CTA ── */
+
 .p-button.analyze-cta {
   width: 100%;
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   background: var(--color-accent);
   color: #000;
-  border: none;
+  border: 1px solid var(--color-accent);
+  border-radius: 0;
+  padding: var(--space-4) var(--space-5);
+  transition: all var(--transition-fast);
 }
 
 .p-button.analyze-cta:hover {
-  background: var(--color-accent-dark);
+  background: transparent;
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .p-button.analyze-cta:disabled {
-  opacity: 0.4;
+  opacity: 0.25;
   cursor: not-allowed;
 }
 
-.webcam-dialog .p-dialog-content {
-  background: var(--color-card);
-}
+/* ── Lucky CTA ── */
 
-.webcam-dialog .p-dialog-header {
-  background: var(--color-card);
-  color: var(--color-text-primary);
-  font-family: var(--font-display);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.webcam-dialog .p-dialog-header-close {
+.p-button.lucky-cta {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-border);
+  border-radius: 0;
   color: var(--color-text-secondary);
+  padding: var(--space-3) var(--space-5);
+  transition: all var(--transition-fast);
 }
 
+.p-button.lucky-cta:hover {
+  border-color: var(--color-text-primary);
+  color: var(--color-text-primary);
+}
+
+.p-button.lucky-cta:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+/* ── Dialogs ── */
+
+.p-dialog {
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  box-shadow: 0 0 0 1px var(--color-border);
+}
+
+.webcam-dialog .p-dialog-content,
 .share-dialog .p-dialog-content {
   background: var(--color-card);
 }
 
+.webcam-dialog .p-dialog-header,
 .share-dialog .p-dialog-header {
   background: var(--color-card);
   color: var(--color-text-primary);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: -0.02em;
   border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
 }
 
+.webcam-dialog .p-dialog-header-close,
 .share-dialog .p-dialog-header-close {
   color: var(--color-text-secondary);
 }
 
+/* ── Reaction buttons ── */
+
 .p-button.reaction-btn {
-  background: var(--color-card);
+  background: transparent;
   border: 1px solid var(--color-border);
+  border-radius: 0;
   color: var(--color-text-primary);
-  font-size: 1.1rem;
+  font-size: 1rem;
   min-width: 48px;
-  min-height: 48px;
+  min-height: 44px;
   padding: var(--space-2) var(--space-3);
+  transition: all var(--transition-fast);
 }
 
 .p-button.reaction-btn:hover {
-  border-color: var(--color-accent);
+  border-color: var(--color-text-primary);
   background: var(--color-surface);
 }
 
-.p-button.lucky-cta {
-  width: 100%;
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  letter-spacing: 0.05em;
-  border-color: var(--color-border);
-  color: var(--color-text-primary);
-}
-
-.p-button.lucky-cta:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.p-button.lucky-cta:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+/* ── Responsive ── */
 
 @media (max-width: 767px) {
   .p-dialog {
@@ -98,6 +120,7 @@
   }
 
   .p-button.analyze-cta {
-    font-size: 1.2rem;
+    font-size: 0.8rem;
+    padding: var(--space-3) var(--space-4);
   }
 }

@@ -2,6 +2,7 @@ export const TEMPLATES = [
   {
     id: 'drake',
     name: 'Drake Approves',
+    referenceUrl: 'https://i.imgflip.com/30b1gx.jpg',
     layout: 'split-vertical',
     photoPlacement: 'background',
     textZones: [
@@ -13,6 +14,7 @@ export const TEMPLATES = [
   {
     id: 'distracted-boyfriend',
     name: 'Distracted Boyfriend',
+    referenceUrl: 'https://i.imgflip.com/1ur9b0.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
@@ -24,6 +26,7 @@ export const TEMPLATES = [
   {
     id: 'this-is-fine',
     name: 'This Is Fine',
+    referenceUrl: 'https://i.imgflip.com/wxica.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
@@ -35,6 +38,7 @@ export const TEMPLATES = [
   {
     id: 'woman-yelling-at-cat',
     name: 'Woman Yelling at Cat',
+    referenceUrl: 'https://i.imgflip.com/345v97.jpg',
     layout: 'split-horizontal',
     photoPlacement: 'zone',
     textZones: [
@@ -46,6 +50,7 @@ export const TEMPLATES = [
   {
     id: 'two-buttons',
     name: 'Two Buttons',
+    referenceUrl: 'https://i.imgflip.com/1g8my4.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
@@ -57,6 +62,7 @@ export const TEMPLATES = [
   {
     id: 'expanding-brain',
     name: 'Expanding Brain',
+    referenceUrl: 'https://i.imgflip.com/1jwhww.jpg',
     layout: 'stacked',
     photoPlacement: 'background',
     textZones: [
@@ -64,6 +70,174 @@ export const TEMPLATES = [
       { id: 'bottom', label: 'Galaxy brain', defaultText: 'Ascended take' },
     ],
     overlayStyle: 'editorial',
+  },
+  {
+    id: 'change-my-mind',
+    name: 'Change My Mind',
+    referenceUrl: 'https://i.imgflip.com/24y43o.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Hot take', defaultText: 'Controversial opinion' },
+      { id: 'bottom', label: 'Challenge', defaultText: 'Change my mind' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'one-does-not-simply',
+    name: 'One Does Not Simply',
+    referenceUrl: 'https://i.imgflip.com/1bij.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Setup', defaultText: 'One does not simply' },
+      { id: 'bottom', label: 'Punchline', defaultText: 'Walk into Mordor' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'hide-the-pain-harold',
+    name: 'Hide the Pain Harold',
+    referenceUrl: 'https://i.imgflip.com/gk5el.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Situation', defaultText: 'When everything goes wrong' },
+      { id: 'bottom', label: 'Mask', defaultText: '*smiles through the pain*' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'batman-slapping-robin',
+    name: 'Batman Slapping Robin',
+    referenceUrl: 'https://i.imgflip.com/9ehk.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Bad take', defaultText: 'But what if we—' },
+      { id: 'bottom', label: 'Correction', defaultText: 'NO.' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'left-exit-12',
+    name: 'Left Exit 12',
+    referenceUrl: 'https://i.imgflip.com/22bdq6.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Responsible choice', defaultText: 'The right thing to do' },
+      { id: 'bottom', label: 'Actual choice', defaultText: 'The unhinged move' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'disaster-girl',
+    name: 'Disaster Girl',
+    referenceUrl: 'https://i.imgflip.com/23ls.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Setup', defaultText: 'When you cause chaos' },
+      { id: 'bottom', label: 'Reaction', defaultText: 'And enjoy every second' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'always-has-been',
+    name: 'Always Has Been',
+    referenceUrl: 'https://i.imgflip.com/46e43q.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Realization', defaultText: 'Wait, it\'s all...' },
+      { id: 'bottom', label: 'Truth', defaultText: 'Always has been' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'is-this-a-pigeon',
+    name: 'Is This a Pigeon?',
+    referenceUrl: 'https://i.imgflip.com/1o00in.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Confusion', defaultText: 'Is this a...?' },
+      { id: 'bottom', label: 'Wrong label', defaultText: 'Absolutely not what it is' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'roll-safe',
+    name: 'Roll Safe',
+    referenceUrl: 'https://i.imgflip.com/1h7in3.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Galaxy brain logic', defaultText: 'Can\'t fail' },
+      { id: 'bottom', label: 'Flawed reasoning', defaultText: 'If you never try' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'monkey-puppet',
+    name: 'Monkey Puppet',
+    referenceUrl: 'https://i.imgflip.com/2gnnjh.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Awkward moment', defaultText: 'When you get caught' },
+      { id: 'bottom', label: 'Reaction', defaultText: '*looks away nervously*' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'uno-draw-25',
+    name: 'UNO Draw 25',
+    referenceUrl: 'https://i.imgflip.com/3lmzyx.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Simple task', defaultText: 'Just do the easy thing' },
+      { id: 'bottom', label: 'Refusal', defaultText: 'Or draw 25' },
+    ],
+    overlayStyle: 'editorial',
+  },
+  {
+    id: 'bernie-mittens',
+    name: 'Bernie Mittens',
+    referenceUrl: 'https://i.imgflip.com/4xjlc3.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Situation', defaultText: 'Everyone else vibing' },
+      { id: 'bottom', label: 'You', defaultText: 'Me, just sitting here' },
+    ],
+    overlayStyle: 'minimal',
+  },
+  {
+    id: 'success-kid',
+    name: 'Success Kid',
+    referenceUrl: 'https://i.imgflip.com/1bhk.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Challenge', defaultText: 'Attempted the impossible' },
+      { id: 'bottom', label: 'Victory', defaultText: 'Nailed it' },
+    ],
+    overlayStyle: 'classic',
+  },
+  {
+    id: 'they-dont-know',
+    name: 'They Don\'t Know',
+    referenceUrl: 'https://i.imgflip.com/4pn1an.jpg',
+    layout: 'single',
+    photoPlacement: 'background',
+    textZones: [
+      { id: 'top', label: 'Everyone else', defaultText: 'Having fun at the party' },
+      { id: 'bottom', label: 'Secret', defaultText: 'They don\'t know I...' },
+    ],
+    overlayStyle: 'classic',
   },
 ]
 

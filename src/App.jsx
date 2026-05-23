@@ -1,17 +1,14 @@
-import { useCallback, useMemo, useState, useEffect, useRef } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Button } from 'primereact/button'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { UploadZone } from './components/UploadZone.jsx'
-import { WebcamCapture } from './components/WebcamCapture.jsx'
-import { AnalysisLoading } from './components/AnalysisLoading.jsx'
-import { SuggestionsGrid } from './components/SuggestionsGrid.jsx'
+import HomePage from './pages/HomePage.jsx'
+import SuggestionsPage from './pages/SuggestionsPage.jsx'
 import EditorPage from './pages/EditorPage.jsx'
+import SavedPage from './pages/SavedPage.jsx'
 import SharePage from './pages/SharePage.jsx'
-import { setFile, clearFile, selectUploadFile, selectPreviewUrl } from './store/uploadSlice.js'
-import { analyzePhoto, clearSuggestions, selectSuggestStatus, selectSuggestions, selectSuggestError } from './store/suggestSlice.js'
-import { setSelectedTemplate, clearEditor, selectTemplate } from './store/editorSlice.js'
+import { restoreDraft } from './store/editorSlice.js'
+import { loadLatestDraft } from './services/draftService.js'
 import './App.css'
 
 const pageVariants = {
@@ -20,155 +17,60 @@ const pageVariants = {
   exit: { opacity: 0, y: -20, transition: { duration: 0.25 } },
 }
 
-const pressVariants = {
-  idle: { scale: 1 },
-  tap: { scale: 0.97 },
-}
-
-function getView(file, suggestStatus, selectedTemplate) {
-  // #region agent log
-  const view = selectedTemplate ? 'editor' : suggestStatus === 'loading' ? 'loading' : suggestStatus === 'succeeded' ? 'suggestions' : 'upload'
-  fetch('http://127.0.0.1:7464/ingest/3c64f30f-cc3c-43c5-a146-0267a694554f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b6fd39'},body:JSON.stringify({sessionId:'b6fd39',location:'App.jsx:getView',message:'view resolved',data:{view,hasFile:!!file,suggestStatus,hasSelectedTemplate:!!selectedTemplate,selectedTemplateId:selectedTemplate?.templateId},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
-  if (selectedTemplate) return 'editor'
-  if (suggestStatus === 'loading') return 'loading'
-  if (suggestStatus === 'succeeded') return 'suggestions'
-  return 'upload'
-}
-
-function MainApp() {
+function AppLayout() {
   const dispatch = useDispatch()
-  const file = useSelector(selectUploadFile)
-  const previewUrl = useSelector(selectPreviewUrl)
-  const suggestStatus = useSelector(selectSuggestStatus)
-  const suggestions = useSelector(selectSuggestions)
-  const suggestError = useSelector(selectSuggestError)
-  const selectedTemplate = useSelector(selectTemplate)
-  const [webcamOpen, setWebcamOpen] = useState(false)
-  const luckyRef = useRef(false)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const isEditor = location.pathname === '/editor' || location.pathname === '/saved'
+  const isSuggestions = location.pathname === '/suggestions'
+  const isHome = location.pathname === '/'
 
   useEffect(() => {
-    if (luckyRef.current && suggestStatus === 'succeeded' && suggestions.length > 0) {
-      luckyRef.current = false
-      dispatch(setSelectedTemplate(suggestions[0]))
-    }
-  }, [suggestStatus, suggestions, dispatch])
-
-  const handleLucky = useCallback(() => {
-    if (file) {
-      luckyRef.current = true
-      dispatch(analyzePhoto(file))
-    }
-  }, [dispatch, file])
-
-  const view = useMemo(
-    () => getView(file, suggestStatus, selectedTemplate),
-    [file, suggestStatus, selectedTemplate]
-  )
-
-  const handleFileSelect = useCallback((f) => {
-    const url = URL.createObjectURL(f)
-    dispatch(setFile({ file: f, previewUrl: url }))
+    loadLatestDraft().then((draft) => {
+      if (draft) {
+        dispatch(restoreDraft({
+          templateId: draft.template_id,
+          layers: draft.layers,
+        }))
+      }
+    }).catch(() => {})
   }, [dispatch])
-
-  const handleAnalyze = useCallback(() => {
-    if (file) dispatch(analyzePhoto(file))
-  }, [dispatch, file])
-
-  const handleSelectSuggestion = useCallback((suggestion) => {
-    // #region agent log
-    fetch('http://127.0.0.1:7464/ingest/3c64f30f-cc3c-43c5-a146-0267a694554f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b6fd39'},body:JSON.stringify({sessionId:'b6fd39',location:'App.jsx:handleSelectSuggestion',message:'suggestion selected',data:{templateId:suggestion?.templateId,topText:suggestion?.topText?.slice(0,30),bottomText:suggestion?.bottomText?.slice(0,30)},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-    dispatch(setSelectedTemplate(suggestion))
-  }, [dispatch])
-
-  const handleStartOver = useCallback(() => {
-    dispatch(clearFile())
-    dispatch(clearSuggestions())
-    dispatch(clearEditor())
-  }, [dispatch])
-
-  const handleBack = useCallback(() => {
-    if (selectedTemplate) {
-      dispatch(clearEditor())
-    } else if (suggestStatus === 'succeeded') {
-      dispatch(clearSuggestions())
-    }
-  }, [dispatch, selectedTemplate, suggestStatus])
-
-  const handleNewPhoto = useCallback((f) => {
-    const url = URL.createObjectURL(f)
-    dispatch(setFile({ file: f, previewUrl: url }))
-    dispatch(clearSuggestions())
-    dispatch(analyzePhoto(f))
-  }, [dispatch])
-
-  const showBack = view !== 'upload'
 
   return (
     <>
-      <nav className="app__nav">
-        {showBack && (
-          <button className="app__back-btn" onClick={handleBack} aria-label="Go back">
-            <i className="pi pi-arrow-left" />
-          </button>
-        )}
-        <span className="app__logo" onClick={handleStartOver} role="button" tabIndex={0}>
-          Chintu Memer
-        </span>
-      </nav>
+      {!isEditor && (
+        <nav className="app__nav">
+          {!isHome && (
+            <button className="app__back-btn" onClick={() => navigate(-1)} aria-label="Go back">
+              <i className="pi pi-arrow-left" />
+            </button>
+          )}
+          <span className="app__logo" onClick={() => navigate('/')} role="button" tabIndex={0}>
+            Chintu Memer
+          </span>
+        </nav>
+      )}
 
-      <main className="app__content">
+      <main className={`app__content ${isEditor ? 'app__content--editor' : ''} ${(isHome || isSuggestions) ? 'app__content--wide' : ''}`}>
         <AnimatePresence mode="wait">
-          {view === 'upload' && (
-            <motion.div key="upload" className="app__view" variants={pageVariants} initial="enter" animate="center" exit="exit">
-              <UploadZone
-                onFileSelect={handleFileSelect}
-                previewUrl={previewUrl}
-                onWebcamClick={() => setWebcamOpen(true)}
-              />
-              <div className="app__buttons">
-                <motion.div className="app__cta-wrap" variants={pressVariants} initial="idle" whileTap="tap">
-                  <Button label="Analyse this chaos →" size="large" className="analyze-cta" disabled={!file} onClick={handleAnalyze} />
-                </motion.div>
-                <motion.div variants={pressVariants} initial="idle" whileTap="tap">
-                  <Button label="🎰 Surprise me" size="large" outlined className="lucky-cta" disabled={!file} onClick={handleLucky} />
-                </motion.div>
-              </div>
-              {suggestError && <p className="app__error">{suggestError}</p>}
-            </motion.div>
-          )}
-
-          {view === 'loading' && (
-            <motion.div key="loading" className="app__view" variants={pageVariants} initial="enter" animate="center" exit="exit">
-              <AnalysisLoading />
-            </motion.div>
-          )}
-
-          {view === 'suggestions' && (
-            <motion.div key="suggestions" className="app__view" variants={pageVariants} initial="enter" animate="center" exit="exit">
-              <SuggestionsGrid
-                suggestions={suggestions}
-                onSelect={handleSelectSuggestion}
-                onStartOver={handleStartOver}
-                onNewPhoto={handleNewPhoto}
-              />
-            </motion.div>
-          )}
-
-          {view === 'editor' && (
-            <motion.div key="editor" className="app__view" variants={pageVariants} initial="enter" animate="center" exit="exit">
-              <EditorPage />
-            </motion.div>
-          )}
+          <motion.div
+            key={location.pathname}
+            className={`app__view ${isEditor ? 'app__view--editor' : ''}`}
+            variants={pageVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+          >
+            <Routes location={location}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/suggestions" element={<SuggestionsPage />} />
+              <Route path="/editor" element={<EditorPage />} />
+              <Route path="/saved" element={<SavedPage />} />
+              <Route path="/m/:memeId" element={<SharePage />} />
+            </Routes>
+          </motion.div>
         </AnimatePresence>
       </main>
-
-      <WebcamCapture
-        visible={webcamOpen}
-        onHide={() => setWebcamOpen(false)}
-        onCapture={handleFileSelect}
-      />
     </>
   )
 }
@@ -177,13 +79,8 @@ export function App() {
   return (
     <BrowserRouter>
       <div className="app">
-        <Routes>
-          <Route path="/" element={<MainApp />} />
-          <Route path="/m/:memeId" element={<SharePage />} />
-        </Routes>
+        <AppLayout />
       </div>
     </BrowserRouter>
   )
 }
-
-// Test comment to test the git push command alias "pushme"

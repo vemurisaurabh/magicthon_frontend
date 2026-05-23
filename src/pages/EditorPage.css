@@ -1,7 +1,31 @@
 .editor-page {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-5);
   width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.editor-page__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+}
+
+@media (max-width: 767px) {
+  .editor-page {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .editor-page__body {
+    overflow: visible;
+    padding: var(--space-3);
+  }
 }

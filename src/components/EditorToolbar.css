@@ -1,57 +1,73 @@
 .editor-toolbar {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   width: 100%;
-  flex-wrap: wrap;
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  flex-shrink: 0;
 }
 
 .editor-toolbar__back {
   color: var(--color-text-secondary) !important;
+  border-radius: 0 !important;
+}
+
+.editor-toolbar__back:hover {
+  color: var(--color-text-primary) !important;
+}
+
+.editor-toolbar__logo {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--transition-fast);
+}
+
+.editor-toolbar__logo:hover {
+  color: var(--color-accent);
+}
+
+.editor-toolbar__divider {
+  color: var(--color-border-hover);
+  font-size: 0.9rem;
+  user-select: none;
 }
 
 .editor-toolbar__name {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  color: var(--color-accent);
-  letter-spacing: 0.03em;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
   flex: 1;
-}
-
-.editor-toolbar__actions {
-  display: flex;
-  gap: var(--space-3);
-}
-
-.editor-toolbar__export {
-  min-width: auto;
-}
-
-.editor-toolbar__share {
-  border-color: var(--color-border);
-  color: var(--color-text-primary);
-}
-
-.editor-toolbar__share:hover {
-  border-color: var(--color-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: lowercase;
 }
 
 @media (max-width: 767px) {
   .editor-toolbar {
-    flex-direction: column;
-    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .editor-toolbar__logo {
+    display: none;
+  }
+
+  .editor-toolbar__divider {
+    display: none;
   }
 
   .editor-toolbar__name {
-    text-align: center;
-  }
-
-  .editor-toolbar__actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .editor-toolbar__actions .p-button {
-    width: 100%;
+    font-size: 0.7rem;
   }
 }

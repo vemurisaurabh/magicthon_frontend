@@ -1,31 +1,19 @@
-import { useCallback } from 'react'
 import { Button } from 'primereact/button'
 import './EditorToolbar.css'
 
-export function EditorToolbar({ templateName, onBack, onExport, onShare, shareDisabled }) {
+export function EditorToolbar({ templateName, onBack, onLogoClick }) {
   return (
     <div className="editor-toolbar">
       <Button
-        label="← Back"
+        icon="pi pi-arrow-left"
         text
         className="editor-toolbar__back"
         onClick={onBack}
+        aria-label="Back"
       />
+      <span className="editor-toolbar__logo" onClick={onLogoClick} role="button" tabIndex={0}>Chintu Memer</span>
+      <span className="editor-toolbar__divider">/</span>
       <span className="editor-toolbar__name">{templateName}</span>
-      <div className="editor-toolbar__actions">
-        <Button
-          label="Export PNG"
-          className="analyze-cta editor-toolbar__export"
-          onClick={onExport}
-        />
-        <Button
-          label="Share"
-          outlined
-          className="editor-toolbar__share"
-          onClick={onShare}
-          disabled={shareDisabled}
-        />
-      </div>
     </div>
   )
 }

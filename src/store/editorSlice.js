@@ -1,30 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { nanoid } from '@reduxjs/toolkit'
 
-const DEFAULT_ZONE_STYLE = {
+const DEFAULT_LAYER_STYLE = {
   fontSize: 48,
   fontFamily: 'Impact, Anton, sans-serif',
-  fill: '#FFFFFF',
+  fill: '#F5E642',
   stroke: '#000000',
   strokeWidth: 2,
   shadowEnabled: true,
   shadowBlur: 4,
-  x: null,
-  y: null,
 }
 
-function buildInitialZoneStyles(suggestion) {
-  const styles = {}
-  const zoneIds = ['top', 'bottom']
-  for (const id of zoneIds) {
-    styles[id] = { ...DEFAULT_ZONE_STYLE }
+function createLayer(text, x, y) {
+  return {
+    id: nanoid(8),
+    text: text || '',
+    x,
+    y,
+    ...DEFAULT_LAYER_STYLE,
   }
-  return styles
 }
 
 function takeSnapshot(state) {
   return {
-    textValues: { ...state.textValues },
-    zoneStyles: JSON.parse(JSON.stringify(state.zoneStyles)),
+    layers: JSON.parse(JSON.stringify(state.layers)),
   }
 }
 
@@ -35,16 +34,15 @@ function pushHistory(state) {
 }
 
 function restoreSnapshot(state, snapshot) {
-  state.textValues = { ...snapshot.textValues }
-  state.zoneStyles = JSON.parse(JSON.stringify(snapshot.zoneStyles))
+  state.layers = JSON.parse(JSON.stringify(snapshot.layers))
 }
 
 const editorSlice = createSlice({
   name: 'editor',
   initialState: {
     selectedTemplate: null,
-    textValues: {},
-    zoneStyles: {},
+    layers: [],
+    activeLayerId: null,
     history: [],
     historyIndex: -1,
   },
@@ -52,52 +50,100 @@ const editorSlice = createSlice({
     setSelectedTemplate(state, action) {
       const suggestion = action.payload
       state.selectedTemplate = suggestion
-      const texts = {}
-      if (suggestion.topText) texts.top = suggestion.topText
-      if (suggestion.bottomText) texts.bottom = suggestion.bottomText
-      state.textValues = texts
-      state.zoneStyles = buildInitialZoneStyles(suggestion)
-      state.history = [takeSnapshot({ textValues: texts, zoneStyles: state.zoneStyles })]
+      const layers = []
+      if (suggestion.topText) {
+        layers.push(createLayer(suggestion.topText, 0.05, 0.05))
+      }
+      if (suggestion.bottomText) {
+        layers.push(createLayer(suggestion.bottomText, 0.05, 0.75))
+      }
+      state.layers = layers
+      state.activeLayerId = layers[0]?.id || null
+      state.history = [takeSnapshot({ layers })]
       state.historyIndex = 0
     },
-    updateText(state, action) {
-      const { zoneId, value } = action.payload
-      state.textValues[zoneId] = value
+
+    addLayer(state, action) {
+      const { x, y } = action.payload
+      const layer = createLayer('', x, y)
+      state.layers.push(layer)
+      state.activeLayerId = layer.id
       pushHistory(state)
     },
-    updateZoneStyle(state, action) {
-      const { zoneId, styleProps } = action.payload
-      if (!state.zoneStyles[zoneId]) {
-        state.zoneStyles[zoneId] = { ...DEFAULT_ZONE_STYLE }
+
+    removeLayer(state, action) {
+      const id = action.payload
+      state.layers = state.layers.filter((l) => l.id !== id)
+      if (state.activeLayerId === id) {
+        state.activeLayerId = state.layers[0]?.id || null
       }
-      Object.assign(state.zoneStyles[zoneId], styleProps)
       pushHistory(state)
     },
-    updateZonePosition(state, action) {
-      const { zoneId, x, y } = action.payload
-      if (!state.zoneStyles[zoneId]) {
-        state.zoneStyles[zoneId] = { ...DEFAULT_ZONE_STYLE }
+
+    setActiveLayer(state, action) {
+      state.activeLayerId = action.payload
+    },
+
+    updateLayerText(state, action) {
+      const { id, text } = action.payload
+      const layer = state.layers.find((l) => l.id === id)
+      if (layer) {
+        layer.text = text
+        pushHistory(state)
       }
-      state.zoneStyles[zoneId].x = x
-      state.zoneStyles[zoneId].y = y
-      pushHistory(state)
     },
+
+    updateLayerStyle(state, action) {
+      const { id, styleProps } = action.payload
+      const layer = state.layers.find((l) => l.id === id)
+      if (layer) {
+        Object.assign(layer, styleProps)
+        pushHistory(state)
+      }
+    },
+
+    updateLayerPosition(state, action) {
+      const { id, x, y } = action.payload
+      const layer = state.layers.find((l) => l.id === id)
+      if (layer) {
+        layer.x = x
+        layer.y = y
+      }
+    },
+
     undo(state) {
       if (state.historyIndex > 0) {
         state.historyIndex -= 1
         restoreSnapshot(state, state.history[state.historyIndex])
+        if (!state.layers.find((l) => l.id === state.activeLayerId)) {
+          state.activeLayerId = state.layers[0]?.id || null
+        }
       }
     },
+
     redo(state) {
       if (state.historyIndex < state.history.length - 1) {
         state.historyIndex += 1
         restoreSnapshot(state, state.history[state.historyIndex])
+        if (!state.layers.find((l) => l.id === state.activeLayerId)) {
+          state.activeLayerId = state.layers[0]?.id || null
+        }
       }
     },
+
+    restoreDraft(state, action) {
+      const { templateId, layers } = action.payload
+      state.selectedTemplate = { templateId }
+      state.layers = layers || []
+      state.activeLayerId = state.layers[0]?.id || null
+      state.history = [takeSnapshot({ layers: state.layers })]
+      state.historyIndex = 0
+    },
+
     clearEditor(state) {
       state.selectedTemplate = null
-      state.textValues = {}
-      state.zoneStyles = {}
+      state.layers = []
+      state.activeLayerId = null
       state.history = []
       state.historyIndex = -1
     },
@@ -106,17 +152,25 @@ const editorSlice = createSlice({
 
 export const {
   setSelectedTemplate,
-  updateText,
-  updateZoneStyle,
-  updateZonePosition,
+  addLayer,
+  removeLayer,
+  setActiveLayer,
+  updateLayerText,
+  updateLayerStyle,
+  updateLayerPosition,
   undo,
   redo,
+  restoreDraft,
   clearEditor,
 } = editorSlice.actions
 
 export const selectTemplate = (state) => state.editor.selectedTemplate
-export const selectTextValues = (state) => state.editor.textValues
-export const selectZoneStyles = (state) => state.editor.zoneStyles
+export const selectLayers = (state) => state.editor.layers
+export const selectActiveLayerId = (state) => state.editor.activeLayerId
+export const selectActiveLayer = (state) => {
+  const id = state.editor.activeLayerId
+  return state.editor.layers.find((l) => l.id === id) || null
+}
 export const selectCanUndo = (state) => state.editor.historyIndex > 0
 export const selectCanRedo = (state) => state.editor.historyIndex < state.editor.history.length - 1
 

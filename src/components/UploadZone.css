@@ -1,8 +1,4 @@
 .upload-zone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
   width: 100%;
 }
 
@@ -12,18 +8,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed var(--color-border);
-  border-radius: var(--radius-lg);
+  border: 1px dashed var(--color-border-hover);
   background: var(--color-surface);
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
   overflow: hidden;
   position: relative;
 }
 
-.upload-zone__droparea:hover,
+.upload-zone__droparea:hover {
+  border-color: var(--color-text-secondary);
+  background: var(--color-card);
+}
+
 .upload-zone__droparea--active {
   border-color: var(--color-accent);
+  background: var(--color-card);
 }
 
 .upload-zone__input {
@@ -34,28 +34,55 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-5);
   padding: var(--space-6);
   text-align: center;
 }
 
 .upload-zone__icon {
-  font-size: 3rem;
-  color: var(--color-text-secondary);
+  font-size: 2.4rem;
+  color: var(--color-text-tertiary);
 }
 
 .upload-zone__title {
   font-family: var(--font-display);
   font-size: 1.6rem;
+  font-style: italic;
   color: var(--color-text-primary);
   margin: 0;
-  letter-spacing: 0.03em;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-.upload-zone__subtitle {
-  font-size: 0.9rem;
+.upload-zone__options {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.upload-zone__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-hover);
   color: var(--color-text-secondary);
-  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.upload-zone__option:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.upload-zone__option i {
+  font-size: 0.85rem;
 }
 
 .upload-zone__preview {
@@ -64,48 +91,6 @@
   object-fit: contain;
   max-height: 400px;
   padding: var(--space-3);
-}
-
-.upload-zone__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.upload-zone__paste-link {
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: var(--space-1);
-  transition: color 0.2s ease;
-}
-
-.upload-zone__paste-link:hover {
-  color: var(--color-accent);
-}
-
-.upload-zone__webcam-btn {
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-primary);
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.upload-zone__webcam-btn:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
 }
 
 @media (max-width: 767px) {
@@ -117,8 +102,14 @@
     font-size: 1.3rem;
   }
 
-  .upload-zone__webcam-btn {
-    width: 48px;
-    height: 48px;
+  .upload-zone__options {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .upload-zone__option {
+    font-size: 0.75rem;
+    padding: var(--space-2) var(--space-3);
   }
 }

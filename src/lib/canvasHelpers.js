@@ -1,25 +1,16 @@
-export function buildTextConfig(zoneId, value, stageWidth, stageHeight, options = {}) {
-  const fontSize = options.fontSize || 48
-  const fontFamily = options.fontFamily || 'Impact, Anton, sans-serif'
-  const fill = options.fill || '#FFFFFF'
-  const stroke = options.stroke ?? '#000000'
-  const strokeWidth = options.strokeWidth ?? 2
-  const shadowEnabled = options.shadowEnabled ?? true
-  const shadowBlur = options.shadowBlur ?? 4
-  const isTop = zoneId === 'top'
-
-  const defaultX = stageWidth * 0.05
-  const defaultY = isTop ? stageHeight * 0.05 : stageHeight * 0.75
-  const x = options.x != null ? options.x : defaultX
-  const y = options.y != null ? options.y : defaultY
+export function buildTextConfig(layer, stageWidth, stageHeight) {
+  const x = layer.x * stageWidth
+  const y = layer.y * stageHeight
 
   return {
-    text: value || '',
-    fontSize,
-    fontFamily,
-    fill,
-    stroke,
-    strokeWidth,
+    text: layer.text || '',
+    fontSize: layer.fontSize || 48,
+    fontFamily: layer.fontFamily || 'Impact, Anton, sans-serif',
+    fill: layer.fill || '#F5E642',
+    stroke: layer.stroke ?? '#000000',
+    strokeWidth: layer.strokeWidth ?? 2,
+    fillAfterStrokeEnabled: true,
+    lineHeight: 1.2,
     align: 'center',
     width: stageWidth * 0.9,
     x,
@@ -27,9 +18,9 @@ export function buildTextConfig(zoneId, value, stageWidth, stageHeight, options 
     draggable: true,
     wrap: 'word',
     shadowColor: '#000000',
-    shadowBlur: shadowEnabled ? shadowBlur : 0,
+    shadowBlur: layer.shadowEnabled ? (layer.shadowBlur ?? 4) : 0,
     shadowOffset: { x: 2, y: 2 },
-    shadowOpacity: shadowEnabled ? 0.6 : 0,
+    shadowOpacity: layer.shadowEnabled ? 0.6 : 0,
   }
 }
 
