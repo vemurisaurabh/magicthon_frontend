@@ -97,9 +97,11 @@ export default function SavedPage() {
 
         <div className="saved__sidebar">
           <div className="saved__hero">
-            <i className="pi pi-check-circle saved__hero-icon" />
+            <div className="saved__hero-badge">
+              <i className="pi pi-check" />
+              <span>Ready</span>
+            </div>
             <h2 className="saved__hero-title">Your meme is ready</h2>
-            <p className="saved__hero-sub">Download, copy, or share it with the world.</p>
           </div>
 
           <div className="saved__actions">
@@ -120,7 +122,10 @@ export default function SavedPage() {
           </div>
 
           <div className="saved__link-section">
-            <span className="saved__link-label">Shareable link</span>
+            <div className="saved__link-header">
+              <i className="pi pi-globe" />
+              <span>Share with the world</span>
+            </div>
             {!shareUrl ? (
               <button
                 className="saved__action saved__action--link"

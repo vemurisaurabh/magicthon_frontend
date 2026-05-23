@@ -19,6 +19,7 @@ export default function EditorPage() {
   const userPhoto = useSelector(selectUploadFile)
   const toastRef = useRef(null)
   const stageRef = useRef(null)
+  const editorRef = useRef(null)
   const [saving, setSaving] = useState(false)
 
   const template = suggestion ? getTemplateById(suggestion.templateId) : null
@@ -69,9 +70,8 @@ export default function EditorPage() {
   }, [suggestion, layers, saving])
 
   const handleDownload = useCallback(() => {
-    const stage = stageRef.current
-    if (!stage) return
-    const dataUrl = stage.toDataURL({ pixelRatio: 2 })
+    const dataUrl = editorRef.current?.getCleanDataUrl()
+    if (!dataUrl) return
     const link = document.createElement('a')
     link.download = 'chintu-meme.png'
     link.href = dataUrl
@@ -80,12 +80,8 @@ export default function EditorPage() {
   }, [])
 
   const handleCopy = useCallback(async () => {
-    const stage = stageRef.current
-    if (!stage) return
     try {
-      const blob = await new Promise((resolve) => {
-        stage.toCanvas({ pixelRatio: 2 }).toBlob(resolve)
-      })
+      const blob = await editorRef.current?.getCleanBlob()
       if (blob && navigator.clipboard && window.ClipboardItem) {
         await navigator.clipboard.write([new window.ClipboardItem({ 'image/png': blob })])
         toastRef.current?.show({ severity: 'success', summary: 'Copied to clipboard', life: 2000 })
@@ -96,9 +92,8 @@ export default function EditorPage() {
   }, [])
 
   const handleShare = useCallback(() => {
-    const stage = stageRef.current
-    if (!stage) return
-    const dataUrl = stage.toDataURL({ pixelRatio: 2 })
+    const dataUrl = editorRef.current?.getCleanDataUrl()
+    if (!dataUrl) return
     navigate('/saved', {
       state: { imageDataUrl: dataUrl, templateId: suggestion?.templateId },
     })
@@ -116,6 +111,7 @@ export default function EditorPage() {
       />
       <div className="editor-page__body">
         <CanvasEditor
+          ref={editorRef}
           template={template}
           userPhoto={userPhoto}
           stageRef={stageRef}

@@ -8,6 +8,7 @@ import EditorPage from './pages/EditorPage.jsx'
 import SavedPage from './pages/SavedPage.jsx'
 import SharePage from './pages/SharePage.jsx'
 import { restoreDraft } from './store/editorSlice.js'
+import { clearSuggestions } from './store/suggestSlice.js'
 import { loadLatestDraft } from './services/draftService.js'
 import './App.css'
 
@@ -49,7 +50,10 @@ function AppLayout() {
       {!isEditor && !isSaved && (
         <nav className="app__nav">
           {!isHome && (
-            <button className="app__back-btn" onClick={() => navigate(parentRoute)} aria-label="Go back">
+            <button className="app__back-btn" onClick={() => {
+              if (isSuggestions) dispatch(clearSuggestions())
+              navigate(parentRoute)
+            }} aria-label="Go back">
               <i className="pi pi-arrow-left" />
             </button>
           )}

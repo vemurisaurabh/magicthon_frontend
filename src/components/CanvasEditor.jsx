@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo, useImperativeHandle, forwardRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Stage, Layer, Image as KonvaImage, Text as KonvaText, Transformer } from 'react-konva'
 import { buildTextConfig, buildImageConfig } from '../lib/canvasHelpers.js'
@@ -24,7 +24,7 @@ const FONT_FAMILIES = [
   { label: 'Bebas Neue', value: '"Bebas Neue", sans-serif' },
 ]
 
-export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload, onCopy, onShare, saving }) {
+export const CanvasEditor = forwardRef(function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload, onCopy, onShare, saving }, ref) {
   const dispatch = useDispatch()
   const layers = useSelector(selectLayers)
   const activeLayerId = useSelector(selectActiveLayerId)
@@ -34,6 +34,31 @@ export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload
   const transformerRef = useRef(null)
   const [stageSize, setStageSize] = useState(400)
   const [img, setImg] = useState(null)
+
+  useImperativeHandle(ref, () => ({
+    getCleanDataUrl(opts = {}) {
+      const tr = transformerRef.current
+      if (tr) {
+        tr.nodes([])
+        tr.getLayer()?.batchDraw()
+      }
+      const stage = stageRef.current
+      if (!stage) return null
+      return stage.toDataURL({ pixelRatio: 2, ...opts })
+    },
+    getCleanBlob(opts = {}) {
+      const tr = transformerRef.current
+      if (tr) {
+        tr.nodes([])
+        tr.getLayer()?.batchDraw()
+      }
+      const stage = stageRef.current
+      if (!stage) return Promise.resolve(null)
+      return new Promise((resolve) => {
+        stage.toCanvas({ pixelRatio: 2, ...opts }).toBlob(resolve)
+      })
+    },
+  }))
 
   useEffect(() => {
     const updateSize = () => {
@@ -141,6 +166,20 @@ export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload
     if (activeLayerId) dispatch(removeLayer(activeLayerId))
   }, [dispatch, activeLayerId])
 
+  const clearSelection = useCallback(() => {
+    dispatch(setActiveLayer(null))
+    const tr = transformerRef.current
+    if (tr) {
+      tr.nodes([])
+      tr.getLayer()?.batchDraw()
+    }
+  }, [dispatch])
+
+  const handleAction = useCallback((action) => {
+    clearSelection()
+    requestAnimationFrame(() => action())
+  }, [clearSelection])
+
   return (
     <div className="canvas-editor">
       <div className="canvas-editor__canvas-area" ref={containerRef}>
@@ -186,19 +225,19 @@ export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload
         </Stage>
         <p className="canvas-editor__hint">Double-click on the image to add text</p>
         <div className="canvas-editor__actions">
-          <button className="canvas-editor__action canvas-editor__action--save" onClick={onSave} disabled={saving}>
+          <button className="canvas-editor__action canvas-editor__action--save" onClick={() => handleAction(onSave)} disabled={saving}>
             <i className={saving ? 'pi pi-spin pi-spinner' : 'pi pi-save'} />
             <span>{saving ? 'Saving...' : 'Save'}</span>
           </button>
-          <button className="canvas-editor__action" onClick={onDownload}>
+          <button className="canvas-editor__action" onClick={() => handleAction(onDownload)}>
             <i className="pi pi-download" />
             <span>Download</span>
           </button>
-          <button className="canvas-editor__action" onClick={onCopy}>
+          <button className="canvas-editor__action" onClick={() => handleAction(onCopy)}>
             <i className="pi pi-copy" />
             <span>Copy</span>
           </button>
-          <button className="canvas-editor__action" onClick={onShare}>
+          <button className="canvas-editor__action" onClick={() => handleAction(onShare)}>
             <i className="pi pi-link" />
             <span>Share</span>
           </button>
@@ -361,4 +400,4 @@ export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload
       </div>
     </div>
   )
-}
+})

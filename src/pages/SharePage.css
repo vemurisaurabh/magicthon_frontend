@@ -74,13 +74,23 @@
   min-height: 48px;
   justify-content: center;
   transition: border-color var(--transition-fast), background var(--transition-fast), transform 0.15s ease;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 
-.share-page__reaction-btn:hover {
+.share-page__reaction-btn:hover:not(:disabled) {
   border-color: var(--color-accent);
   background: var(--color-accent-muted);
+}
+
+.share-page__reaction-btn--maxed {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.share-page__reaction-btn--maxed:hover {
+  border-color: var(--color-border);
+  background: var(--color-card);
 }
 
 .share-page__reaction-btn--bump {
@@ -97,6 +107,18 @@
 .share-page__reaction-emoji {
   font-size: 1.3rem;
   line-height: 1;
+}
+
+.share-page__burst-emoji {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -0.6em;
+  margin-left: -0.6em;
+  font-size: 1.2rem;
+  pointer-events: none;
+  z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .share-page__reaction-count {

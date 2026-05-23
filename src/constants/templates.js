@@ -204,16 +204,16 @@ export const TEMPLATES = [
     overlayStyle: 'editorial',
   },
   {
-    id: 'bernie-mittens',
-    name: 'Bernie Mittens',
-    referenceUrl: 'https://i.imgflip.com/4xjlc3.jpg',
+    id: 'grandma-internet',
+    name: 'Grandma Finds the Internet',
+    referenceUrl: 'https://i.imgflip.com/1bhw.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
-      { id: 'top', label: 'Situation', defaultText: 'Everyone else vibing' },
-      { id: 'bottom', label: 'You', defaultText: 'Me, just sitting here' },
+      { id: 'top', label: 'Discovery', defaultText: 'Just found out about...' },
+      { id: 'bottom', label: 'Reaction', defaultText: 'This changes everything' },
     ],
-    overlayStyle: 'minimal',
+    overlayStyle: 'classic',
   },
   {
     id: 'success-kid',
@@ -228,16 +228,16 @@ export const TEMPLATES = [
     overlayStyle: 'classic',
   },
   {
-    id: 'trade-offer',
-    name: 'Trade Offer',
-    referenceUrl: 'https://i.imgflip.com/54hjww.jpg',
+    id: 'confession-bear',
+    name: 'Confession Bear',
+    referenceUrl: 'https://i.imgflip.com/1bh8.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
-      { id: 'top', label: 'I receive', defaultText: 'Your time and effort' },
-      { id: 'bottom', label: 'You receive', defaultText: 'Nothing in return' },
+      { id: 'top', label: 'Setup', defaultText: 'I have a confession...' },
+      { id: 'bottom', label: 'Confession', defaultText: 'I actually enjoy it' },
     ],
-    overlayStyle: 'editorial',
+    overlayStyle: 'classic',
   },
 ]
 

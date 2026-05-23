@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getMemeData } from '../services/shareService.js'
@@ -7,24 +7,60 @@ import './SharePage.css'
 
 const REACTION_EMOJIS = ['😂', '🔥', '💀', '👏', '🤌']
 
-function ReactionButton({ emoji, count, onReact }) {
+let burstId = 0
+
+function spawnBurst() {
+  const PARTICLE_COUNT = 6
+  const particles = []
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const angle = -30 - (120 / (PARTICLE_COUNT - 1)) * i
+    const rad = (angle * Math.PI) / 180
+    const distance = 60 + Math.random() * 50
+    particles.push({
+      id: ++burstId,
+      x: Math.cos(rad) * distance,
+      y: Math.sin(rad) * distance,
+      scale: 0.8 + Math.random() * 0.7,
+      duration: 0.6 + Math.random() * 0.5,
+      delay: Math.random() * 0.08,
+    })
+  }
+  return particles
+}
+
+function ReactionButton({ emoji, count, onReact, disabled }) {
   const prevCount = useRef(count)
   const [bumping, setBumping] = useState(false)
+  const [particles, setParticles] = useState([])
 
   useEffect(() => {
     if (count !== prevCount.current) {
       setBumping(true)
       prevCount.current = count
+
+      const burst = spawnBurst()
+      setParticles((prev) => [...prev, ...burst])
+
       const t = setTimeout(() => setBumping(false), 400)
-      return () => clearTimeout(t)
+      const ids = burst.map((p) => p.id)
+      const cleanup = setTimeout(() => {
+        setParticles((prev) => prev.filter((p) => !ids.includes(p.id)))
+      }, 1200)
+
+      return () => { clearTimeout(t); clearTimeout(cleanup) }
     }
   }, [count])
 
+  const handleClick = useCallback(() => {
+    if (!disabled && onReact) onReact()
+  }, [disabled, onReact])
+
   return (
     <motion.button
-      className={`share-page__reaction-btn ${bumping ? 'share-page__reaction-btn--bump' : ''}`}
-      whileTap={{ scale: 0.88 }}
-      onClick={onReact}
+      className={`share-page__reaction-btn ${bumping ? 'share-page__reaction-btn--bump' : ''} ${disabled ? 'share-page__reaction-btn--maxed' : ''}`}
+      whileTap={disabled ? {} : { scale: 0.88 }}
+      onClick={handleClick}
+      disabled={disabled}
     >
       <span className="share-page__reaction-emoji">{emoji}</span>
       <AnimatePresence mode="popLayout">
@@ -39,6 +75,25 @@ function ReactionButton({ emoji, count, onReact }) {
           {count}
         </motion.span>
       </AnimatePresence>
+
+      <AnimatePresence>
+        {particles.map((p) => (
+          <motion.span
+            key={p.id}
+            className="share-page__burst-emoji"
+            initial={{ opacity: 1, x: 0, y: 0, scale: 0.4 }}
+            animate={{ opacity: 0, x: p.x, y: p.y, scale: p.scale }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: p.duration,
+              delay: p.delay,
+              ease: [0.2, 0.8, 0.3, 1],
+            }}
+          >
+            {emoji}
+          </motion.span>
+        ))}
+      </AnimatePresence>
     </motion.button>
   )
 }
@@ -47,7 +102,7 @@ export default function SharePage() {
   const { memeId } = useParams()
   const [meme, setMeme] = useState(null)
   const [error, setError] = useState(null)
-  const { reactions, addReaction } = useReactions(memeId)
+  const { reactions, addReaction, canReact } = useReactions(memeId)
 
   useEffect(() => {
     if (!memeId) return
@@ -94,6 +149,7 @@ export default function SharePage() {
             emoji={emoji}
             count={reactions[emoji] || 0}
             onReact={() => addReaction(emoji)}
+            disabled={!canReact(emoji)}
           />
         ))}
       </div>

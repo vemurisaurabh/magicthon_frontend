@@ -160,16 +160,19 @@ export default function HomePage() {
               placeholder='e.g. "My friend fell asleep during the meeting, roast him"'
               rows={3}
             />
-            <span className="home-context__label-hint">Leave empty and Chintu Memer will figure it out</span>
+            <span className="home-context__auto-hint">
+              <i className="pi pi-sparkles" />
+              Leave empty — Chintu Memer will figure it out
+            </span>
           </div>
 
           <div className="home-context__templates">
             <label className="home-context__label">
               Pick meme formats
-              <span className="home-context__count">
+              <span className={`home-context__badge ${selectedTemplates.length > 0 ? 'home-context__badge--active' : ''}`}>
                 {selectedTemplates.length > 0
-                  ? `${selectedTemplates.length} / ${MAX_TEMPLATES}`
-                  : 'optional'}
+                  ? `${selectedTemplates.length} selected`
+                  : 'optional — tap to pick'}
               </span>
             </label>
             <Carousel
@@ -179,7 +182,7 @@ export default function HomePage() {
               numScroll={1}
               responsiveOptions={CAROUSEL_RESPONSIVE}
               circular
-              autoplayInterval={3000}
+              autoplayInterval={1000}
               className="tpl-carousel"
             />
           </div>
