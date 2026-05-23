@@ -139,6 +139,10 @@ export function CanvasEditor({ template, userPhoto, textValues, onTextChange, st
 
   const activeStyle = activeZone ? getZoneStyle(activeZone) : DEFAULT_STYLE
 
+  // #region agent log
+  fetch('http://127.0.0.1:7464/ingest/3c64f30f-cc3c-43c5-a146-0267a694554f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b6fd39'},body:JSON.stringify({sessionId:'b6fd39',location:'CanvasEditor.jsx:render',message:'CanvasEditor render',data:{hasTemplate:!!template,textZoneCount:template?.textZones?.length,hasUserPhoto:!!userPhoto,hasImg:!!img,stageSize,zoneStyleKeys:Object.keys(zoneStyles||{}),textConfigCount:textConfigs?.length},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
+
   return (
     <div className="canvas-editor" ref={containerRef}>
       <Stage

@@ -19,6 +19,9 @@ export default function EditorPage() {
   const [shareModalOpen, setShareModalOpen] = useState(false)
 
   const template = suggestion ? getTemplateById(suggestion.templateId) : null
+  // #region agent log
+  fetch('http://127.0.0.1:7464/ingest/3c64f30f-cc3c-43c5-a146-0267a694554f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b6fd39'},body:JSON.stringify({sessionId:'b6fd39',location:'EditorPage.jsx:render',message:'EditorPage render',data:{hasSuggestion:!!suggestion,templateId:suggestion?.templateId,hasTemplate:!!template,templateName:template?.name,hasUserPhoto:!!userPhoto},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
 
   useEffect(() => {
     const handleKeyDown = (e) => {

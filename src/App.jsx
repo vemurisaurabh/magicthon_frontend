@@ -26,6 +26,10 @@ const pressVariants = {
 }
 
 function getView(file, suggestStatus, selectedTemplate) {
+  // #region agent log
+  const view = selectedTemplate ? 'editor' : suggestStatus === 'loading' ? 'loading' : suggestStatus === 'succeeded' ? 'suggestions' : 'upload'
+  fetch('http://127.0.0.1:7464/ingest/3c64f30f-cc3c-43c5-a146-0267a694554f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b6fd39'},body:JSON.stringify({sessionId:'b6fd39',location:'App.jsx:getView',message:'view resolved',data:{view,hasFile:!!file,suggestStatus,hasSelectedTemplate:!!selectedTemplate,selectedTemplateId:selectedTemplate?.templateId},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
   if (selectedTemplate) return 'editor'
   if (suggestStatus === 'loading') return 'loading'
   if (suggestStatus === 'succeeded') return 'suggestions'
@@ -72,6 +76,9 @@ function MainApp() {
   }, [dispatch, file])
 
   const handleSelectSuggestion = useCallback((suggestion) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7464/ingest/3c64f30f-cc3c-43c5-a146-0267a694554f',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b6fd39'},body:JSON.stringify({sessionId:'b6fd39',location:'App.jsx:handleSelectSuggestion',message:'suggestion selected',data:{templateId:suggestion?.templateId,topText:suggestion?.topText?.slice(0,30),bottomText:suggestion?.bottomText?.slice(0,30)},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     dispatch(setSelectedTemplate(suggestion))
   }, [dispatch])
 
