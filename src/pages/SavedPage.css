@@ -22,13 +22,20 @@
   gap: var(--space-3);
 }
 
-.saved__toolbar-title {
+.saved__toolbar-logo {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-style: italic;
   color: var(--color-text-primary);
   letter-spacing: -0.02em;
   white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--transition-fast);
+}
+
+.saved__toolbar-logo:hover {
+  color: var(--color-accent);
 }
 
 .saved__toolbar-btn {
@@ -97,6 +104,40 @@
   padding: var(--space-4);
   gap: var(--space-4);
   overflow-y: auto;
+}
+
+/* ── Hero heading ── */
+
+.saved__hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.saved__hero-icon {
+  font-size: 1.4rem;
+  color: var(--color-accent);
+}
+
+.saved__hero-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-style: italic;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.saved__hero-sub {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-text-tertiary);
+  margin: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .saved__actions {
@@ -225,11 +266,15 @@
     border-top: 1px solid var(--color-border);
   }
 
-  .saved__toolbar-title {
-    font-size: 0.95rem;
+  .saved__toolbar-logo {
+    font-size: 1rem;
   }
 
   .saved__toolbar-btn span {
     display: none;
+  }
+
+  .saved__hero-title {
+    font-size: 1.3rem;
   }
 }

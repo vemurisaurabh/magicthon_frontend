@@ -39,8 +39,10 @@ export function CanvasEditor({ template, userPhoto, stageRef, onSave, onDownload
     const updateSize = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect()
-        const maxSide = Math.min(rect.width, rect.height, 600)
-        setStageSize(Math.max(280, maxSide))
+        const isMobile = window.innerWidth <= 559
+        const maxCap = isMobile ? rect.width - 16 : 600
+        const maxSide = Math.min(rect.width, rect.height, maxCap)
+        setStageSize(Math.max(240, maxSide))
       }
     }
     updateSize()

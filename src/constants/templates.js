@@ -228,16 +228,16 @@ export const TEMPLATES = [
     overlayStyle: 'classic',
   },
   {
-    id: 'they-dont-know',
-    name: 'They Don\'t Know',
-    referenceUrl: 'https://i.imgflip.com/4pn1an.jpg',
+    id: 'trade-offer',
+    name: 'Trade Offer',
+    referenceUrl: 'https://i.imgflip.com/54hjww.jpg',
     layout: 'single',
     photoPlacement: 'background',
     textZones: [
-      { id: 'top', label: 'Everyone else', defaultText: 'Having fun at the party' },
-      { id: 'bottom', label: 'Secret', defaultText: 'They don\'t know I...' },
+      { id: 'top', label: 'I receive', defaultText: 'Your time and effort' },
+      { id: 'bottom', label: 'You receive', defaultText: 'Nothing in return' },
     ],
-    overlayStyle: 'classic',
+    overlayStyle: 'editorial',
   },
 ]
 

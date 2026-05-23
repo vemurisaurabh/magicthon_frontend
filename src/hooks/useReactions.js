@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '../lib/supabase.js'
+import { socket } from '../lib/socket.js'
 import { getReactions as fetchReactions, addReaction as postReaction } from '../services/shareService.js'
 
 export function useReactions(memeId) {
@@ -11,31 +11,31 @@ export function useReactions(memeId) {
   }, [memeId])
 
   useEffect(() => {
-    if (!memeId || !supabase) return
+    if (!memeId) return
 
-    const channel = supabase
-      .channel(`reactions-${memeId}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'reactions', filter: `meme_id=eq.${memeId}` },
-        (payload) => {
-          const emoji = payload.new?.emoji
-          if (emoji) {
-            setReactions((prev) => ({ ...prev, [emoji]: (prev[emoji] || 0) + 1 }))
-          }
-        }
-      )
-      .subscribe()
+    if (!socket.connected) socket.connect()
+
+    socket.emit('join-meme', memeId)
+
+    const handleReaction = (data) => {
+      if (data.memeId === memeId && data.counts) {
+        setReactions(data.counts)
+      }
+    }
+
+    socket.on('reaction', handleReaction)
 
     return () => {
-      supabase.removeChannel(channel)
+      socket.off('reaction', handleReaction)
+      socket.emit('leave-meme', memeId)
     }
   }, [memeId])
 
   const addReaction = useCallback(async (emoji) => {
     setReactions((prev) => ({ ...prev, [emoji]: (prev[emoji] || 0) + 1 }))
     try {
-      await postReaction(memeId, emoji)
+      const counts = await postReaction(memeId, emoji)
+      setReactions(counts)
     } catch {
       setReactions((prev) => ({
         ...prev,

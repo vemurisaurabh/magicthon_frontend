@@ -58,6 +58,22 @@
   50% { opacity: 0.6; }
 }
 
+@media (max-width: 559px) {
+  .analysis-loading {
+    gap: var(--space-5);
+    padding: var(--space-5) var(--space-3);
+    min-height: 60vh;
+  }
+
+  .analysis-loading__phrase {
+    font-size: 1.5rem;
+  }
+
+  .analysis-loading__phrase-wrap {
+    min-height: 36px;
+  }
+}
+
 @media (min-width: 600px) {
   .analysis-loading__skeletons {
     grid-template-columns: repeat(2, 1fr);

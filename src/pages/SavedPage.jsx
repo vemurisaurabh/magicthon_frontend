@@ -81,7 +81,9 @@ export default function SavedPage() {
           <i className="pi pi-arrow-left" />
           <span>Back to editor</span>
         </button>
-        <span className="saved__toolbar-title">Your meme is ready</span>
+        <span className="saved__toolbar-logo" onClick={() => navigate('/')} role="button" tabIndex={0}>
+          Chintu Memer
+        </span>
         <button className="saved__toolbar-btn" onClick={() => navigate('/')}>
           <i className="pi pi-home" />
           <span>New meme</span>
@@ -94,6 +96,12 @@ export default function SavedPage() {
         </div>
 
         <div className="saved__sidebar">
+          <div className="saved__hero">
+            <i className="pi pi-check-circle saved__hero-icon" />
+            <h2 className="saved__hero-title">Your meme is ready</h2>
+            <p className="saved__hero-sub">Download, copy, or share it with the world.</p>
+          </div>
+
           <div className="saved__actions">
             <button className="saved__action saved__action--primary" onClick={handleDownload}>
               <i className="pi pi-download" />
