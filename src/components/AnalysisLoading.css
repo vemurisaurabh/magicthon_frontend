@@ -1,0 +1,43 @@
+.analysis-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-7) 0;
+  width: 100%;
+}
+
+.analysis-loading__phrase-wrap {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.analysis-loading__phrase {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--color-accent);
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+
+.analysis-loading__skeletons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .analysis-loading__skeletons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .analysis-loading__skeletons {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
